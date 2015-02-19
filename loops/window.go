@@ -107,14 +107,12 @@ func (self *LoopWindow) Run() {
 
 	gl.ClearColor(0.2, 0.2, 0.2, 0)
 
+	vertexArray := gl.GenVertexArray()
+	vertexArray.Bind()
+
 	self.Load()
 
 	check()
-	log.Print("Loaded")
-
-	positionLocation := program.GetAttribLocation("position")
-	positionLocation.EnableArray()
-	positionLocation.AttribPointer(2, gl.FLOAT, false, 0, nil)
 
 	graphics := NewGraphics(self, &program)
 
