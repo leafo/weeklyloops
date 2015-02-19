@@ -1,7 +1,11 @@
 package loops
 
 import (
+	"image"
+	"image/color"
+	"image/png"
 	"log"
+	"os"
 
 	gl "github.com/go-gl/gl"
 	glfw "github.com/go-gl/glfw3"
@@ -69,8 +73,37 @@ func (self *LoopWindow) KeyCallback(w *glfw.Window, key glfw.Key, scancode int, 
 	}
 
 	if key == glfw.KeyS && action == glfw.Press {
-		log.Print("Take screenshot..")
+		self.Screenshot("screen.png")
 	}
+}
+
+func (self *LoopWindow) Screenshot(fname string) {
+	buffer := make([]uint8, self.Width*self.Height*4)
+	gl.ReadPixels(0, 0, self.Width, self.Height, gl.RGBA, gl.UNSIGNED_BYTE, buffer)
+
+	img := image.NewRGBA(image.Rect(0, 0, self.Width, self.Height))
+
+	for y := 0; y < self.Height; y++ {
+		for x := 0; x < self.Width; x++ {
+			pos := (y*self.Width + x) * 4
+			pixel := color.RGBA{buffer[pos], buffer[pos+1], buffer[pos+2], buffer[pos+3]}
+			img.SetRGBA(x, y, pixel)
+		}
+	}
+
+	file, err := os.Create(fname)
+	if err != nil {
+		log.Fatal("Failed to open file: ", err.Error())
+	}
+
+	defer file.Close()
+
+	err = png.Encode(file, img)
+	if err != nil {
+		log.Fatal("Failed to write image: ", err.Error())
+	}
+
+	log.Print("Took screenshot: ", fname)
 }
 
 func (self *LoopWindow) Run() {
