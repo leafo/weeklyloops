@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	gl "github.com/go-gl/gl"
 	"github.com/go-gl/glh"
 	"github.com/leafo/weeklyloops/loops"
@@ -16,8 +14,9 @@ func main() {
 	var vertexArray gl.VertexArray
 	var triangleBuffer gl.Buffer
 
+	loops.NewIdentityMat4().Mul(loops.NewIdentityMat4()).Print()
+
 	loop.Load = func() {
-		fmt.Println("loading the thing")
 		vertexArray = gl.GenVertexArray()
 		vertexArray.Bind()
 
@@ -28,7 +27,6 @@ func main() {
 	}
 
 	loop.Update = func(dt float64) {
-		fmt.Println("Update: ", dt)
 	}
 
 	loop.Draw = func() {
