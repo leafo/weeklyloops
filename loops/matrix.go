@@ -1,6 +1,9 @@
 package loops
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 type Mat4 [16]float32
 
@@ -19,6 +22,15 @@ func NewTranslateMatrix(tx, ty, tz float32) Mat4 {
 		0, 1, 0, 0,
 		0, 0, 1, 0,
 		tx, ty, tz, 1,
+	}
+}
+
+func NewRotate2DMatrix(theta float32) Mat4 {
+	return Mat4{
+		float32(math.Cos(float64(theta))), float32(math.Sin(float64(theta))), 0, 0,
+		-float32(math.Sin(float64(theta))), float32(math.Cos(float64(theta))), 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1,
 	}
 }
 

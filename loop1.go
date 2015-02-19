@@ -1,8 +1,10 @@
 package main
 
 import (
+	"math"
+
 	gl "github.com/go-gl/gl"
-	"github.com/go-gl/glh"
+	glh "github.com/go-gl/glh"
 	"github.com/leafo/weeklyloops/loops"
 )
 
@@ -13,6 +15,8 @@ func main() {
 
 	var vertexArray gl.VertexArray
 	var triangleBuffer gl.Buffer
+
+	var elapsed float64
 
 	loop.Load = func() {
 		vertexArray = gl.GenVertexArray()
@@ -25,13 +29,14 @@ func main() {
 	}
 
 	loop.Update = func(dt float64) {
+		elapsed += dt
 	}
 
 	loop.Draw = func(g *loops.Graphics) {
-		g.SetMat(loops.NewTranslateMatrix(0.5, 0, 0))
-		gl.DrawArrays(gl.TRIANGLE_STRIP, 0, len(verts))
+		t := loops.NewTranslateMatrix(float32(math.Sin(elapsed)), 0, 0)
+		r := loops.NewRotate2DMatrix(float32(elapsed))
 
-		g.SetMat(loops.NewTranslateMatrix(-0.5, 0, 0))
+		g.SetMat(r.Mul(t))
 		gl.DrawArrays(gl.TRIANGLE_STRIP, 0, len(verts))
 	}
 
