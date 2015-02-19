@@ -11,6 +11,7 @@ import (
 var (
 	defaultWidth  = 400
 	defaultHeight = 400
+	defaultTitle  = "loop"
 )
 
 var defaultVert = `
@@ -47,6 +48,7 @@ type LoopWindow struct {
 	Draw   DrawFunc
 	Load   LoadFunc
 	Window *glfw.Window
+	Title  string
 }
 
 func errorCallback(err glfw.ErrorCode, desc string) {
@@ -57,6 +59,7 @@ func NewLoopWindow() *LoopWindow {
 	return &LoopWindow{
 		Width:  defaultWidth,
 		Height: defaultHeight,
+		Title:  defaultTitle,
 	}
 }
 
@@ -79,7 +82,7 @@ func (self *LoopWindow) Run() {
 
 	defer glfw.Terminate()
 
-	window, err := glfw.CreateWindow(self.Width, self.Height, "loop1", nil, nil)
+	window, err := glfw.CreateWindow(self.Width, self.Height, self.Title, nil, nil)
 
 	if err != nil {
 		log.Fatal("Failed to create window")

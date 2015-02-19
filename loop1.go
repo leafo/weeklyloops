@@ -9,6 +9,7 @@ import (
 
 func main() {
 	loop := loops.NewLoopWindow()
+	loop.Title = "loop1"
 
 	var elapsed float64
 
