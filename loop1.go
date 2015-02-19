@@ -14,7 +14,7 @@ func main() {
 	var vertexArray gl.VertexArray
 	var triangleBuffer gl.Buffer
 
-	loops.NewIdentityMat4().Mul(loops.NewIdentityMat4()).Print()
+	ident := loops.NewIdentityMat4()
 
 	loop.Load = func() {
 		vertexArray = gl.GenVertexArray()
@@ -29,7 +29,8 @@ func main() {
 	loop.Update = func(dt float64) {
 	}
 
-	loop.Draw = func() {
+	loop.Draw = func(g *loops.Graphics) {
+		g.SetMat(ident)
 		gl.DrawArrays(gl.TRIANGLE_STRIP, 0, len(verts))
 	}
 

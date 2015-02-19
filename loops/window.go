@@ -16,10 +16,11 @@ var (
 var defaultVert = `
 #version 330
 
+uniform mat4 mat;
 in vec2 position;
 
 void main() {
-	gl_Position = vec4(position, 0, 1);
+	gl_Position = mat * vec4(position, 0, 1);
 }
 `
 
@@ -33,8 +34,10 @@ void main() {
 }
 `
 
-type UpdateFunc func(dt float64)
-type DrawFunc func()
+var AssertErrors func(string)
+
+type UpdateFunc func(float64)
+type DrawFunc func(*Graphics)
 type LoadFunc func()
 
 type LoopWindow struct {
@@ -63,7 +66,7 @@ func NewLoopWindow() *LoopWindow {
 	}
 }
 
-func (win *LoopWindow) Run() {
+func (self *LoopWindow) Run() {
 	glfw.SetErrorCallback(errorCallback)
 
 	if !glfw.Init() {
@@ -72,13 +75,13 @@ func (win *LoopWindow) Run() {
 
 	defer glfw.Terminate()
 
-	window, err := glfw.CreateWindow(win.Width, win.Height, "loop1", nil, nil)
+	window, err := glfw.CreateWindow(self.Width, self.Height, "loop1", nil, nil)
 
 	if err != nil {
 		log.Fatal("Failed to create window")
 	}
 
-	win.Window = window
+	self.Window = window
 
 	window.SetKeyCallback(keyCallback)
 	window.MakeContextCurrent()
@@ -89,6 +92,13 @@ func (win *LoopWindow) Run() {
 		log.Fatal("failed to init gl")
 	}
 
+	check := glh.OpenGLSentinel()
+
+	AssertErrors = func(msg string) {
+		log.Print(msg)
+		check()
+	}
+
 	// load shaders
 	vertShader := glh.Shader{gl.VERTEX_SHADER, defaultVert}
 	fragShader := glh.Shader{gl.FRAGMENT_SHADER, defaultFrag}
@@ -97,23 +107,31 @@ func (win *LoopWindow) Run() {
 
 	gl.ClearColor(0.2, 0.2, 0.2, 0)
 
-	win.Load()
+	self.Load()
+
+	check()
+	log.Print("Loaded")
 
 	positionLocation := program.GetAttribLocation("position")
 	positionLocation.EnableArray()
 	positionLocation.AttribPointer(2, gl.FLOAT, false, 0, nil)
 
+	graphics := NewGraphics(self, &program)
+
 	time := glfw.GetTime()
 
+	log.Print("Running loop")
 	for !window.ShouldClose() {
-		gl.Viewport(0, 0, win.Width, win.Height)
+		gl.Viewport(0, 0, self.Width, self.Height)
 		gl.Clear(gl.COLOR_BUFFER_BIT)
 
 		newTime := glfw.GetTime()
 		if time != 0 {
-			win.Update(newTime - time)
-			win.Draw()
+			self.Update(newTime - time)
+			self.Draw(graphics)
 		}
+
+		check()
 
 		time = newTime
 
@@ -121,5 +139,5 @@ func (win *LoopWindow) Run() {
 		glfw.PollEvents()
 	}
 
-	glh.OpenGLSentinel()
+	log.Print("Finished")
 }
