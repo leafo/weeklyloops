@@ -27,6 +27,10 @@ func main() {
 		gl.BufferData(gl.ARRAY_BUFFER, int(glh.Sizeof(gl.FLOAT))*len(verts), &verts, gl.STATIC_DRAW)
 	}
 
+	loop.Update = func(dt float64) {
+		fmt.Println("Update: ", dt)
+	}
+
 	loop.Draw = func() {
 		gl.DrawArrays(gl.TRIANGLE_STRIP, 0, len(verts))
 	}

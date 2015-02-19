@@ -33,12 +33,14 @@ void main() {
 }
 `
 
+type UpdateFunc func(dt float64)
 type DrawFunc func()
 type LoadFunc func()
 
 type LoopWindow struct {
 	Width  int
 	Height int
+	Update UpdateFunc
 	Draw   DrawFunc
 	Load   LoadFunc
 	Window *glfw.Window
@@ -101,11 +103,19 @@ func (win *LoopWindow) Run() {
 	positionLocation.EnableArray()
 	positionLocation.AttribPointer(2, gl.FLOAT, false, 0, nil)
 
+	time := glfw.GetTime()
+
 	for !window.ShouldClose() {
 		gl.Viewport(0, 0, win.Width, win.Height)
 		gl.Clear(gl.COLOR_BUFFER_BIT)
 
-		win.Draw()
+		newTime := glfw.GetTime()
+		if time != 0 {
+			win.Update(newTime - time)
+			win.Draw()
+		}
+
+		time = newTime
 
 		window.SwapBuffers()
 		glfw.PollEvents()
