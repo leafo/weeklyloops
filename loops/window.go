@@ -53,16 +53,20 @@ func errorCallback(err glfw.ErrorCode, desc string) {
 	log.Print("Error: ", err, " ", desc)
 }
 
-func keyCallback(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
-	if key == glfw.KeyEscape && action == glfw.Press {
-		w.SetShouldClose(true)
-	}
-}
-
 func NewLoopWindow() *LoopWindow {
 	return &LoopWindow{
 		Width:  defaultWidth,
 		Height: defaultHeight,
+	}
+}
+
+func (self *LoopWindow) KeyCallback(w *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
+	if key == glfw.KeyEscape && action == glfw.Press {
+		w.SetShouldClose(true)
+	}
+
+	if key == glfw.KeyS && action == glfw.Press {
+		log.Print("Take screenshot..")
 	}
 }
 
@@ -83,7 +87,7 @@ func (self *LoopWindow) Run() {
 
 	self.Window = window
 
-	window.SetKeyCallback(keyCallback)
+	window.SetKeyCallback(self.KeyCallback)
 	window.MakeContextCurrent()
 
 	glfw.SwapInterval(1)
