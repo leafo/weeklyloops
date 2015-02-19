@@ -13,6 +13,15 @@ func NewIdentityMat4() Mat4 {
 	}
 }
 
+func NewTranslateMatrix(tx, ty, tz float32) Mat4 {
+	return Mat4{
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		tx, ty, tz, 1,
+	}
+}
+
 func (self Mat4) Mul(other Mat4) Mat4 {
 	return Mat4{
 		self[0]*other[0] + self[1]*other[4] + self[2]*other[8] + self[3]*other[12],
