@@ -13,25 +13,15 @@ func main() {
 	loop.Title = "loop1"
 	loop.Speed = 0.3
 
-	v := loops.Vec2{0, 0.5}
-	v.Print()
+	a := loops.Vec2{0, 0.5}
+	b := a.RotateAngle(360.0 / 3)
+	c := b.RotateAngle(360.0 / 3)
 
-	x1 := v[0]
-	y1 := v[1]
-
-	v = v.RotateAngle(360.0 / 3)
-	v.Print()
-
-	x2 := v[0]
-	y2 := v[1]
-
-	v = v.RotateAngle(360.0 / 3)
-	v.Print()
-
-	x3 := v[0]
-	y3 := v[1]
-
-	triangle := []float32{x1, y1, x2, y2, x3, y3}
+	triangle := []float32{
+		a[0], a[1],
+		b[0], b[1],
+		c[0], c[1],
+	}
 
 	loop.Draw = func(t float64, g *loops.Graphics) {
 		g.SetColor(color.RGBA{20, 20, 20, 255})
@@ -51,6 +41,7 @@ func main() {
 		for y := -0.8; y <= 0.8; y += 0.1 {
 			col = 0
 			for x := -0.8; x <= 0.8; x += 0.1 {
+
 				rad = -rad
 				realRad := rad * float32(row/3+1)
 				realScale := 1.0
@@ -58,7 +49,11 @@ func main() {
 					realScale = realScale / 1.5
 				}
 
-				g.SetMat(s.Scale(float32(realScale), float32(realScale), 1).Rotate(realRad).Translate(float32(x), float32(y), 0))
+				m := s.Scale(float32(realScale), float32(realScale), 1).
+					Rotate(realRad).
+					Translate(float32(x), float32(y), 0)
+
+				g.SetMat(m)
 				g.Draw(gl.TRIANGLE_STRIP, triangle)
 
 				i += 1
