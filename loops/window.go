@@ -33,10 +33,11 @@ void main() {
 var defaultFrag = `
 #version 330
 
+uniform vec4 color;
 out vec4 fragColor;
 
 void main() {
-	fragColor = vec4(1,1,1,1);
+	fragColor = color;
 }
 `
 
@@ -162,6 +163,8 @@ func (self *LoopWindow) Run() {
 
 	graphics := NewGraphics(self, &program)
 	graphics.SetMat(NewIdentityMat4())
+	graphics.SetColor(color.RGBA{255, 255, 255, 255})
+
 
 	time := glfw.GetTime()
 	var elapsed float64

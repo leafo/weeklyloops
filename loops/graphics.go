@@ -1,6 +1,7 @@
 package loops
 
 import (
+	"image/color"
 	"log"
 
 	gl "github.com/go-gl/gl"
@@ -25,6 +26,16 @@ func NewGraphics(window *LoopWindow, program *gl.Program) *Graphics {
 func (self *Graphics) SetMat(mat Mat4) {
 	loc := self.Program.GetUniformLocation("mat")
 	loc.UniformMatrix4f(false, (*[16]float32)(&mat))
+}
+
+func (self *Graphics) SetColor(c color.RGBA) {
+	r := float32(c.R) / float32(255)
+	g := float32(c.G) / float32(255)
+	b := float32(c.B) / float32(255)
+	a := float32(c.A) / float32(255)
+
+	loc := self.Program.GetUniformLocation("color")
+	loc.Uniform4f(r, g, b, a)
 }
 
 func (self *Graphics) Draw(mode gl.GLenum, verts []float32) {
