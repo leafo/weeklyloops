@@ -16,6 +16,7 @@ var (
 	defaultWidth  = 400
 	defaultHeight = 400
 	defaultTitle  = "loop"
+	defaultSpeed  = 1.0
 )
 
 var defaultVert = `
@@ -42,7 +43,7 @@ void main() {
 var AssertErrors func(string)
 
 type UpdateFunc func(float64)
-type DrawFunc func(*Graphics)
+type DrawFunc func(float64, *Graphics)
 type LoadFunc func()
 
 type LoopWindow struct {
@@ -53,6 +54,7 @@ type LoopWindow struct {
 	Load   LoadFunc
 	Window *glfw.Window
 	Title  string
+	Speed  float64
 }
 
 func errorCallback(err glfw.ErrorCode, desc string) {
@@ -64,6 +66,10 @@ func NewLoopWindow() *LoopWindow {
 		Width:  defaultWidth,
 		Height: defaultHeight,
 		Title:  defaultTitle,
+		Speed:  defaultSpeed,
+		Draw:   func(float64, *Graphics) {},
+		Update: func(float64) {},
+		Load:   func() {},
 	}
 }
 
@@ -155,8 +161,10 @@ func (self *LoopWindow) Run() {
 	check()
 
 	graphics := NewGraphics(self, &program)
+	graphics.SetMat(NewIdentityMat4())
 
 	time := glfw.GetTime()
+	var elapsed float64
 
 	log.Print("Running loop")
 	for !window.ShouldClose() {
@@ -165,8 +173,15 @@ func (self *LoopWindow) Run() {
 
 		newTime := glfw.GetTime()
 		if time != 0 {
-			self.Update(newTime - time)
-			self.Draw(graphics)
+			dt := newTime - time
+			self.Update(dt)
+			elapsed += dt * self.Speed
+
+			for elapsed > 1.0 {
+				elapsed -= 1.0
+			}
+
+			self.Draw(elapsed, graphics)
 		}
 
 		check()

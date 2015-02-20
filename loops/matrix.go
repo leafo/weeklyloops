@@ -25,6 +25,15 @@ func NewTranslateMatrix(tx, ty, tz float32) Mat4 {
 	}
 }
 
+func NewScaleMatrix(sx, sy, sz float32) Mat4 {
+	return Mat4{
+		sx, 0, 0, 0,
+		0, sy, 0, 0,
+		0, 0, sz, 0,
+		0, 0, 0, 1,
+	}
+}
+
 func NewRotate2DMatrix(theta float32) Mat4 {
 	return Mat4{
 		float32(math.Cos(float64(theta))), float32(math.Sin(float64(theta))), 0, 0,
@@ -65,4 +74,16 @@ func (self Mat4) Print() {
 	}
 
 	fmt.Print("\n")
+}
+
+func (self Mat4) Translate(tx, ty, tz float32) Mat4 {
+	return self.Mul(NewTranslateMatrix(tx, ty, tz))
+}
+
+func (self Mat4) Scale(sx, sy, sz float32) Mat4 {
+	return self.Mul(NewScaleMatrix(sx, sy, sz))
+}
+
+func (self Mat4) Rotate(theta float32) Mat4 {
+	return self.Mul(NewRotate2DMatrix(theta))
 }

@@ -75,7 +75,7 @@ func (self Vec2) Rotate(rads float32) Vec2 {
 
 	return Vec2{
 		float32(x*c - y*s),
-		float32(y*c - x*s),
+		float32(y*c + x*s),
 	}
 }
 
@@ -84,5 +84,5 @@ func (self Vec2) RotateAngle(deg float32) Vec2 {
 }
 
 func (self Vec2) Print() {
-	fmt.Printf("Vec2<%.2f,%.2f>", self[0], self[1])
+	fmt.Printf("Vec2<%.2f,%.2f>\n", self[0], self[1])
 }
