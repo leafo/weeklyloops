@@ -33,6 +33,7 @@ func main() {
 	triangle := []float32{x1, y1, x2, y2, x3, y3}
 
 	loop.Draw = func(t float64, g *loops.Graphics) {
+		t = loops.Smoothstep(t)
 		s := loops.NewScaleMatrix(0.1, 0.1, 1)
 
 		rad := float32(t * math.Pi * 2)
@@ -46,8 +47,12 @@ func main() {
 			for x := -0.8; x <= 0.8; x += 0.1 {
 				rad = -rad
 				realRad := rad * float32(row/3+1)
+				realScale := 1.0
+				if i%2 == 0 {
+					realScale = realScale / 1.5
+				}
 
-				g.SetMat(s.Rotate(realRad).Translate(float32(x), float32(y), 0))
+				g.SetMat(s.Scale(float32(realScale), float32(realScale), 1).Rotate(realRad).Translate(float32(x), float32(y), 0))
 				g.Draw(gl.TRIANGLE_STRIP, triangle)
 
 				i += 1
