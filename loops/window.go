@@ -127,7 +127,7 @@ func (self *LoopWindow) Screenshot(fname string) {
 }
 
 func (self *LoopWindow) Record(graphics *Graphics) {
-	numFrames := 60
+	numFrames := 120
 
 	gl.Viewport(0, 0, self.Width, self.Height)
 	gl.Clear(gl.COLOR_BUFFER_BIT)

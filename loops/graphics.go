@@ -44,6 +44,15 @@ func (self *Graphics) Draw(mode gl.GLenum, verts []float32) {
 	gl.DrawArrays(mode, 0, len(verts))
 }
 
+func (self *Graphics) DrawRect(x, y, w, h float32) {
+	self.Draw(gl.TRIANGLE_STRIP, []float32{
+		x, y,
+		x, y + h,
+		x + w, y,
+		x + w, y + h,
+	})
+}
+
 func (self *Graphics) bindDefaultBuffer() {
 	if !self.defaultBufferCreated {
 		log.Print("Creating default buffer")
