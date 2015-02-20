@@ -1,11 +1,14 @@
 package loops
 
 import (
+	"flag"
+	"fmt"
 	"image"
 	"image/color"
 	"image/png"
 	"log"
 	"os"
+	"strconv"
 
 	gl "github.com/go-gl/gl"
 	glfw "github.com/go-gl/glfw3"
@@ -17,6 +20,7 @@ var (
 	defaultHeight = 400
 	defaultTitle  = "loop"
 	defaultSpeed  = 1.0
+	record        = false
 )
 
 var defaultVert = `
@@ -58,11 +62,20 @@ type LoopWindow struct {
 	Speed  float64
 }
 
+func init() {
+	flag.BoolVar(&record, "record", false, "Record to gif instead of playing")
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: loop [OPTIONS]\n\nOptions:\n")
+		flag.PrintDefaults()
+	}
+}
+
 func errorCallback(err glfw.ErrorCode, desc string) {
 	log.Print("Error: ", err, " ", desc)
 }
 
 func NewLoopWindow() *LoopWindow {
+	flag.Parse()
 	return &LoopWindow{
 		Width:  defaultWidth,
 		Height: defaultHeight,
@@ -113,7 +126,28 @@ func (self *LoopWindow) Screenshot(fname string) {
 	log.Print("Took screenshot: ", fname)
 }
 
+func (self *LoopWindow) Record(graphics *Graphics) {
+	numFrames := 60
+
+	gl.Viewport(0, 0, self.Width, self.Height)
+	gl.Clear(gl.COLOR_BUFFER_BIT)
+
+	self.Draw(0.0, graphics)
+	self.Window.SwapBuffers()
+
+	for i := 0; i < numFrames; i++ {
+		gl.Viewport(0, 0, self.Width, self.Height)
+		gl.Clear(gl.COLOR_BUFFER_BIT)
+
+		self.Draw(float64(i)/float64(numFrames), graphics)
+		self.Window.SwapBuffers()
+
+		self.Screenshot("frame" + strconv.Itoa(i) + ".png")
+	}
+}
+
 func (self *LoopWindow) Run() {
+
 	glfw.SetErrorCallback(errorCallback)
 
 	if !glfw.Init() {
@@ -165,6 +199,11 @@ func (self *LoopWindow) Run() {
 	graphics.SetMat(NewIdentityMat4())
 	graphics.SetColor(color.RGBA{255, 255, 255, 255})
 
+	if record {
+		self.Record(graphics)
+		log.Print("Finished")
+		return
+	}
 
 	time := glfw.GetTime()
 	var elapsed float64
