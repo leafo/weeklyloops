@@ -18,6 +18,21 @@ type Program struct {
 	Program uint32
 }
 
+type glGetParam func(uint32, uint32, *int32)
+type glGetInfoLog func(uint32, int32, *int32, *uint8)
+
+func checkErrorLog(msg string, object uint32, statusEnum uint32, getParam glGetParam, getLog glGetInfoLog) {
+	var status int32
+	getParam(object, statusEnum, &status)
+	if status == gl.FALSE {
+		var errorMessageLength int32
+		getParam(object, gl.INFO_LOG_LENGTH, &errorMessageLength)
+		errorMessage := strings.Repeat("\x00", int(errorMessageLength+1))
+		getLog(object, errorMessageLength, nil, gl.Str(errorMessage))
+		log.Fatal(msg, errorMessage)
+	}
+}
+
 func NewProgram(shaders ...ShaderSource) Program {
 	program := gl.CreateProgram()
 
@@ -29,16 +44,8 @@ func NewProgram(shaders ...ShaderSource) Program {
 		gl.ShaderSource(shader, 1, &csource, nil)
 		gl.CompileShader(shader)
 
-		var status int32
-		gl.GetShaderiv(shader, gl.COMPILE_STATUS, &status)
-		if status == gl.FALSE {
-			var errorMessageLength int32
-			gl.GetShaderiv(shader, gl.INFO_LOG_LENGTH, &errorMessageLength)
-			errorMessage := strings.Repeat("\x00", int(errorMessageLength+1))
-			gl.GetShaderInfoLog(shader, errorMessageLength, nil, gl.Str(errorMessage))
-
-			log.Fatal("Failed to compile shader", errorMessage)
-		}
+		checkErrorLog("Failed to compile shader:",
+			shader, gl.COMPILE_STATUS, gl.GetShaderiv, gl.GetShaderInfoLog)
 
 		gl.AttachShader(program, shader)
 		shaderIds = append(shaderIds, shader)
