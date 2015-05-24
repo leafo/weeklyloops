@@ -57,11 +57,27 @@ func (self *Graphics) DrawRect(x, y, w, h float32) {
 	})
 }
 
-// func (self *Graphics) DrawColored(mode uint32, verts []float32) {
-// 	self.bindDefaultBuffer()
-// 	gl.BufferData(gl.ARRAY_BUFFER, len(verts)*4, gl.Ptr(verts), gl.STATIC_DRAW)
-// 	gl.DrawArrays(mode, 0, int32(len(verts)))
-// }
+// v = [ [x,y,r,g,b,a], ... ]
+func (self *Graphics) DrawColored(mode uint32, verts []float32) {
+	program := self.LoopWindow.programColored2d
+
+	numVerts := len(verts) / 6
+
+	self.bindBuffers()
+	self.bindProgram(program)
+
+	gl.BufferData(gl.ARRAY_BUFFER, len(verts)*4, gl.Ptr(verts), gl.STATIC_DRAW)
+
+	loc := uint32(program.GetAttribLocation("v_position"))
+	gl.EnableVertexAttribArray(loc)
+	gl.VertexAttribPointer(loc, 2, gl.FLOAT, false, 6*4, gl.PtrOffset(0))
+
+	loc = uint32(program.GetAttribLocation("v_color"))
+	gl.EnableVertexAttribArray(loc)
+	gl.VertexAttribPointer(loc, 4, gl.FLOAT, false, 6*4, gl.PtrOffset(2*4))
+
+	gl.DrawArrays(mode, 0, int32(numVerts))
+}
 
 func (self *Graphics) bindBuffers() {
 	if !self.buffersCreated {
