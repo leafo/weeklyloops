@@ -3,7 +3,9 @@ package loops
 import (
 	"flag"
 	"fmt"
+	"image"
 	"image/color"
+	"image/png"
 	"log"
 	"os"
 	"strconv"
@@ -95,32 +97,34 @@ func (self *LoopWindow) KeyCallback(w *glfw.Window, key glfw.Key, scancode int, 
 }
 
 func (self *LoopWindow) Screenshot(fname string) {
-	// buffer := make([]uint8, self.Width*self.Height*4)
-	// gl.ReadPixels(0, 0, self.Width, self.Height, gl.RGBA, gl.UNSIGNED_BYTE, buffer)
+	buffer := make([]uint8, self.Width*self.Height*4)
 
-	// img := image.NewRGBA(image.Rect(0, 0, self.Width, self.Height))
+	gl.ReadPixels(0, 0, int32(self.Width), int32(self.Height),
+		gl.RGBA, gl.UNSIGNED_BYTE, gl.Ptr(buffer))
 
-	// for y := 0; y < self.Height; y++ {
-	// 	for x := 0; x < self.Width; x++ {
-	// 		pos := (y*self.Width + x) * 4
-	// 		pixel := color.RGBA{buffer[pos], buffer[pos+1], buffer[pos+2], buffer[pos+3]}
-	// 		img.SetRGBA(x, y, pixel)
-	// 	}
-	// }
+	img := image.NewRGBA(image.Rect(0, 0, self.Width, self.Height))
 
-	// file, err := os.Create(fname)
-	// if err != nil {
-	// 	log.Fatal("Failed to open file: ", err.Error())
-	// }
+	for y := 0; y < self.Height; y++ {
+		for x := 0; x < self.Width; x++ {
+			pos := (y*self.Width + x) * 4
+			pixel := color.RGBA{buffer[pos], buffer[pos+1], buffer[pos+2], buffer[pos+3]}
+			img.SetRGBA(x, y, pixel)
+		}
+	}
 
-	// defer file.Close()
+	file, err := os.Create(fname)
+	if err != nil {
+		log.Fatal("Failed to open file: ", err.Error())
+	}
 
-	// err = png.Encode(file, img)
-	// if err != nil {
-	// 	log.Fatal("Failed to write image: ", err.Error())
-	// }
+	defer file.Close()
 
-	// log.Print("Took screenshot: ", fname)
+	err = png.Encode(file, img)
+	if err != nil {
+		log.Fatal("Failed to write image: ", err.Error())
+	}
+
+	log.Print("Took screenshot: ", fname)
 }
 
 func (self *LoopWindow) Record(graphics *Graphics) {
