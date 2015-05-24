@@ -14,6 +14,10 @@ type ShaderSource struct {
 	Source string
 }
 
+type ProgramSource struct {
+	ShaderSources []ShaderSource
+}
+
 type Program struct {
 	Program uint32
 }
