@@ -10,15 +10,16 @@ import (
 type Graphics struct {
 	*Program
 	*LoopWindow
-	defaultBuffer        *Buffer
-	defaultBufferCreated bool
+	defaultBuffer      *Buffer
+	defaultVertexArray *VertexArray
+	buffersCreated     bool
 }
 
 func NewGraphics(window *LoopWindow, program *Program) *Graphics {
 	return &Graphics{
-		Program:              program,
-		LoopWindow:           window,
-		defaultBufferCreated: false,
+		Program:        program,
+		LoopWindow:     window,
+		buffersCreated: false,
 	}
 }
 
@@ -53,13 +54,17 @@ func (self *Graphics) DrawRect(x, y, w, h float32) {
 }
 
 func (self *Graphics) bindDefaultBuffer() {
-	if !self.defaultBufferCreated {
+	if !self.buffersCreated {
 		log.Print("Creating default buffer")
 		self.defaultBuffer = NewBuffer()
-		self.defaultBufferCreated = true
+		self.defaultVertexArray = NewVertexArray()
+
+		self.buffersCreated = true
 	}
 
 	self.defaultBuffer.Bind(gl.ARRAY_BUFFER)
+	self.defaultVertexArray.Bind()
+
 	loc := uint32(self.Program.GetAttribLocation("position"))
 	gl.EnableVertexAttribArray(loc)
 	gl.VertexAttribPointer(loc, 2, gl.FLOAT, false, 0, nil)
