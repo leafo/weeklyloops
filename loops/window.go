@@ -159,6 +159,11 @@ func (self *LoopWindow) Run() {
 	}
 	defer glfw.Terminate()
 
+	glfw.WindowHint(glfw.Resizable, glfw.False)
+	glfw.WindowHint(glfw.ContextVersionMajor, 4)
+	glfw.WindowHint(glfw.ContextVersionMinor, 1)
+	glfw.WindowHint(glfw.OpenGLProfile, glfw.OpenGLCoreProfile)
+	glfw.WindowHint(glfw.OpenGLForwardCompatible, glfw.True)
 	window, err := glfw.CreateWindow(self.Width, self.Height, self.Title, nil, nil)
 
 	if err != nil {
@@ -180,6 +185,9 @@ func (self *LoopWindow) Run() {
 	program.Use()
 
 	gl.ClearColor(0.2, 0.2, 0.2, 0)
+
+	// gl.Enable(gl.DEPTH_TEST)
+	// gl.DepthFunc(gl.LESS)
 
 	self.Load()
 
