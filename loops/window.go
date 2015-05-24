@@ -44,8 +44,6 @@ void main() {
 }
 `
 
-var AssertErrors func(string)
-
 type UpdateFunc func(float64)
 type DrawFunc func(float64, *Graphics)
 type LoadFunc func()
@@ -67,10 +65,6 @@ func init() {
 		fmt.Fprintf(os.Stderr, "Usage: loop [OPTIONS]\n\nOptions:\n")
 		flag.PrintDefaults()
 	}
-}
-
-func errorCallback(err glfw.ErrorCode, desc string) {
-	log.Print("Error: ", err, " ", desc)
 }
 
 func NewLoopWindow() *LoopWindow {
@@ -148,8 +142,6 @@ func (self *LoopWindow) Record(graphics *Graphics) {
 }
 
 func (self *LoopWindow) Run() {
-	// glfw.SetErrorCallback(errorCallback)
-
 	if err := glfw.Init(); err != nil {
 		log.Fatalln("Failed to init glfw:", err)
 	}
@@ -172,13 +164,6 @@ func (self *LoopWindow) Run() {
 		log.Fatal("Failed to init gl")
 	}
 
-	// check := glh.OpenGLSentinel()
-
-	AssertErrors = func(msg string) {
-		log.Print(msg)
-		// check()
-	}
-
 	// load shaders
 	vertShader := Shader{gl.VERTEX_SHADER, defaultVert}
 	fragShader := Shader{gl.FRAGMENT_SHADER, defaultFrag}
@@ -187,13 +172,9 @@ func (self *LoopWindow) Run() {
 
 	gl.ClearColor(0.2, 0.2, 0.2, 0)
 
-	// not sure why I added this...
-	// vertexArray := gl.GenVertexArray()
-	// vertexArray.Bind()
-
 	self.Load()
 
-	// check()
+	CheckGLForErrors()
 
 	graphics := NewGraphics(self, &program)
 	graphics.SetMat(NewIdentityMat4())
@@ -226,7 +207,7 @@ func (self *LoopWindow) Run() {
 			self.Draw(elapsed, graphics)
 		}
 
-		// check()
+		CheckGLForErrors()
 
 		time = newTime
 
