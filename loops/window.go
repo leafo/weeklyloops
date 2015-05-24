@@ -59,14 +59,16 @@ type DrawFunc func(float64, *Graphics)
 type LoadFunc func()
 
 type LoopWindow struct {
-	Width  int
-	Height int
-	Update UpdateFunc
-	Draw   DrawFunc
-	Load   LoadFunc
-	Window *glfw.Window
-	Title  string
-	Speed  float64
+	Width            int
+	Height           int
+	Update           UpdateFunc
+	Draw             DrawFunc
+	Load             LoadFunc
+	Window           *glfw.Window
+	Title            string
+	Speed            float64
+	programSolid2d   Program
+	programColored2d Program
 }
 
 func init() {
@@ -181,8 +183,7 @@ func (self *LoopWindow) Run() {
 		log.Fatal("Failed to init gl")
 	}
 
-	program := NewProgram(programSolid2d.ShaderSources...)
-	program.Use()
+	self.programSolid2d = NewProgram(programSolid2d.ShaderSources...)
 
 	gl.ClearColor(0.2, 0.2, 0.2, 0)
 
@@ -193,7 +194,7 @@ func (self *LoopWindow) Run() {
 
 	CheckGLForErrors()
 
-	graphics := NewGraphics(self, &program)
+	graphics := NewGraphics(self)
 	graphics.SetMat(NewIdentityMat4())
 	graphics.SetColor(color.RGBA{255, 255, 255, 255})
 

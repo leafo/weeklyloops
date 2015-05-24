@@ -8,40 +8,43 @@ import (
 )
 
 type Graphics struct {
-	*Program
 	*LoopWindow
 	defaultBuffer      *Buffer
 	defaultVertexArray *VertexArray
 	buffersCreated     bool
+
+	currentMat   Mat4
+	currentColor color.RGBA
 }
 
-func NewGraphics(window *LoopWindow, program *Program) *Graphics {
+func NewGraphics(window *LoopWindow) *Graphics {
 	return &Graphics{
-		Program:        program,
 		LoopWindow:     window,
 		buffersCreated: false,
 	}
 }
 
 func (self *Graphics) SetMat(mat Mat4) {
-	loc := self.Program.GetUniformLocation("mat")
-	gl.UniformMatrix4fv(loc, 1, false, &mat[0])
+	self.currentMat = mat
 }
 
 func (self *Graphics) SetColor(c color.RGBA) {
-	r := float32(c.R) / float32(255)
-	g := float32(c.G) / float32(255)
-	b := float32(c.B) / float32(255)
-	a := float32(c.A) / float32(255)
-
-	loc := self.Program.GetUniformLocation("color")
-	gl.Uniform4f(loc, r, g, b, a)
+	self.currentColor = c
 }
 
 func (self *Graphics) Draw(mode uint32, verts []float32) {
-	self.bindDefaultBuffer()
+	program := self.LoopWindow.programSolid2d
+
+	self.bindBuffers()
+	self.bindProgram(program)
+
 	numVerts := len(verts) / 2
 	gl.BufferData(gl.ARRAY_BUFFER, len(verts)*4, gl.Ptr(verts), gl.STATIC_DRAW)
+
+	loc := uint32(program.GetAttribLocation("v_position"))
+	gl.EnableVertexAttribArray(loc)
+	gl.VertexAttribPointer(loc, 2, gl.FLOAT, false, 0, nil)
+
 	gl.DrawArrays(mode, 0, int32(numVerts))
 }
 
@@ -54,7 +57,13 @@ func (self *Graphics) DrawRect(x, y, w, h float32) {
 	})
 }
 
-func (self *Graphics) bindDefaultBuffer() {
+// func (self *Graphics) DrawColored(mode uint32, verts []float32) {
+// 	self.bindDefaultBuffer()
+// 	gl.BufferData(gl.ARRAY_BUFFER, len(verts)*4, gl.Ptr(verts), gl.STATIC_DRAW)
+// 	gl.DrawArrays(mode, 0, int32(len(verts)))
+// }
+
+func (self *Graphics) bindBuffers() {
 	if !self.buffersCreated {
 		log.Print("Creating default buffer")
 		self.defaultBuffer = NewBuffer()
@@ -66,7 +75,19 @@ func (self *Graphics) bindDefaultBuffer() {
 	self.defaultBuffer.Bind(gl.ARRAY_BUFFER)
 	self.defaultVertexArray.Bind()
 
-	loc := uint32(self.Program.GetAttribLocation("v_position"))
-	gl.EnableVertexAttribArray(loc)
-	gl.VertexAttribPointer(loc, 2, gl.FLOAT, false, 0, nil)
+}
+
+func (self *Graphics) bindProgram(program Program) {
+	program.Use()
+	loc := program.GetUniformLocation("mat")
+	gl.UniformMatrix4fv(loc, 1, false, &self.currentMat[0])
+
+	c := self.currentColor
+	r := float32(c.R) / float32(255)
+	g := float32(c.G) / float32(255)
+	b := float32(c.B) / float32(255)
+	a := float32(c.A) / float32(255)
+
+	loc = program.GetUniformLocation("color")
+	gl.Uniform4f(loc, r, g, b, a)
 }
