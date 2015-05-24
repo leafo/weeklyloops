@@ -52,12 +52,8 @@ func NewProgram(shaders ...ShaderSource) Program {
 	}
 
 	gl.LinkProgram(program)
-
-	var status int32
-	gl.GetProgramiv(program, gl.LINK_STATUS, &status)
-	if status == gl.FALSE {
-		log.Fatal("Failed to link program")
-	}
+	checkErrorLog("Failed to link program:",
+		program, gl.LINK_STATUS, gl.GetProgramiv, gl.GetProgramInfoLog)
 
 	for _, shader := range shaderIds {
 		gl.DeleteShader(shader)
