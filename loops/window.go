@@ -8,6 +8,7 @@ import (
 	"image/png"
 	"log"
 	"os"
+	"runtime"
 	"strconv"
 
 	gl "github.com/go-gl/gl/v4.1-core/gl"
@@ -26,6 +27,7 @@ var defaultVert = `
 #version 330
 
 uniform mat4 mat;
+
 in vec2 position;
 
 void main() {
@@ -60,6 +62,8 @@ type LoopWindow struct {
 }
 
 func init() {
+	runtime.LockOSThread()
+
 	flag.BoolVar(&record, "record", false, "Record to gif instead of playing")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage: loop [OPTIONS]\n\nOptions:\n")
