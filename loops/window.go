@@ -3,16 +3,13 @@ package loops
 import (
 	"flag"
 	"fmt"
-	"image"
 	"image/color"
-	"image/png"
 	"log"
 	"os"
 	"strconv"
 
-	gl "github.com/go-gl/gl"
-	glfw "github.com/go-gl/glfw3"
-	glh "github.com/go-gl/glh"
+	gl "github.com/go-gl/gl/v4.1-core/gl"
+	glfw "github.com/go-gl/glfw/v3.1/glfw"
 )
 
 var (
@@ -98,45 +95,45 @@ func (self *LoopWindow) KeyCallback(w *glfw.Window, key glfw.Key, scancode int, 
 }
 
 func (self *LoopWindow) Screenshot(fname string) {
-	buffer := make([]uint8, self.Width*self.Height*4)
-	gl.ReadPixels(0, 0, self.Width, self.Height, gl.RGBA, gl.UNSIGNED_BYTE, buffer)
+	// buffer := make([]uint8, self.Width*self.Height*4)
+	// gl.ReadPixels(0, 0, self.Width, self.Height, gl.RGBA, gl.UNSIGNED_BYTE, buffer)
 
-	img := image.NewRGBA(image.Rect(0, 0, self.Width, self.Height))
+	// img := image.NewRGBA(image.Rect(0, 0, self.Width, self.Height))
 
-	for y := 0; y < self.Height; y++ {
-		for x := 0; x < self.Width; x++ {
-			pos := (y*self.Width + x) * 4
-			pixel := color.RGBA{buffer[pos], buffer[pos+1], buffer[pos+2], buffer[pos+3]}
-			img.SetRGBA(x, y, pixel)
-		}
-	}
+	// for y := 0; y < self.Height; y++ {
+	// 	for x := 0; x < self.Width; x++ {
+	// 		pos := (y*self.Width + x) * 4
+	// 		pixel := color.RGBA{buffer[pos], buffer[pos+1], buffer[pos+2], buffer[pos+3]}
+	// 		img.SetRGBA(x, y, pixel)
+	// 	}
+	// }
 
-	file, err := os.Create(fname)
-	if err != nil {
-		log.Fatal("Failed to open file: ", err.Error())
-	}
+	// file, err := os.Create(fname)
+	// if err != nil {
+	// 	log.Fatal("Failed to open file: ", err.Error())
+	// }
 
-	defer file.Close()
+	// defer file.Close()
 
-	err = png.Encode(file, img)
-	if err != nil {
-		log.Fatal("Failed to write image: ", err.Error())
-	}
+	// err = png.Encode(file, img)
+	// if err != nil {
+	// 	log.Fatal("Failed to write image: ", err.Error())
+	// }
 
-	log.Print("Took screenshot: ", fname)
+	// log.Print("Took screenshot: ", fname)
 }
 
 func (self *LoopWindow) Record(graphics *Graphics) {
 	numFrames := 120
 
-	gl.Viewport(0, 0, self.Width, self.Height)
+	gl.Viewport(0, 0, int32(self.Width), int32(self.Height))
 	gl.Clear(gl.COLOR_BUFFER_BIT)
 
 	self.Draw(0.0, graphics)
 	self.Window.SwapBuffers()
 
 	for i := 0; i < numFrames; i++ {
-		gl.Viewport(0, 0, self.Width, self.Height)
+		gl.Viewport(0, 0, int32(self.Width), int32(self.Height))
 		gl.Clear(gl.COLOR_BUFFER_BIT)
 
 		self.Draw(float64(i)/float64(numFrames), graphics)
@@ -147,13 +144,11 @@ func (self *LoopWindow) Record(graphics *Graphics) {
 }
 
 func (self *LoopWindow) Run() {
+	// glfw.SetErrorCallback(errorCallback)
 
-	glfw.SetErrorCallback(errorCallback)
-
-	if !glfw.Init() {
-		log.Fatal("Failed to init glfw")
+	if err := glfw.Init(); err != nil {
+		log.Fatalln("Failed to init glfw:", err)
 	}
-
 	defer glfw.Terminate()
 
 	window, err := glfw.CreateWindow(self.Width, self.Height, self.Title, nil, nil)
@@ -169,31 +164,32 @@ func (self *LoopWindow) Run() {
 
 	glfw.SwapInterval(1)
 
-	if gl.Init() != 0 {
-		log.Fatal("failed to init gl")
+	if err := gl.Init(); err != nil {
+		log.Fatal("Failed to init gl")
 	}
 
-	check := glh.OpenGLSentinel()
+	// check := glh.OpenGLSentinel()
 
 	AssertErrors = func(msg string) {
 		log.Print(msg)
-		check()
+		// check()
 	}
 
 	// load shaders
-	vertShader := glh.Shader{gl.VERTEX_SHADER, defaultVert}
-	fragShader := glh.Shader{gl.FRAGMENT_SHADER, defaultFrag}
-	program := glh.NewProgram(vertShader, fragShader)
+	vertShader := Shader{gl.VERTEX_SHADER, defaultVert}
+	fragShader := Shader{gl.FRAGMENT_SHADER, defaultFrag}
+	program := NewProgram(vertShader, fragShader)
 	program.Use()
 
 	gl.ClearColor(0.2, 0.2, 0.2, 0)
 
-	vertexArray := gl.GenVertexArray()
-	vertexArray.Bind()
+	// not sure why I added this...
+	// vertexArray := gl.GenVertexArray()
+	// vertexArray.Bind()
 
 	self.Load()
 
-	check()
+	// check()
 
 	graphics := NewGraphics(self, &program)
 	graphics.SetMat(NewIdentityMat4())
@@ -210,7 +206,7 @@ func (self *LoopWindow) Run() {
 
 	log.Print("Running loop")
 	for !window.ShouldClose() {
-		gl.Viewport(0, 0, self.Width, self.Height)
+		gl.Viewport(0, 0, int32(self.Width), int32(self.Height))
 		gl.Clear(gl.COLOR_BUFFER_BIT)
 
 		newTime := glfw.GetTime()
@@ -226,7 +222,7 @@ func (self *LoopWindow) Run() {
 			self.Draw(elapsed, graphics)
 		}
 
-		check()
+		// check()
 
 		time = newTime
 

@@ -4,18 +4,17 @@ import (
 	"image/color"
 	"log"
 
-	gl "github.com/go-gl/gl"
-	"github.com/go-gl/glh"
+	gl "github.com/go-gl/gl/v4.1-core/gl"
 )
 
 type Graphics struct {
-	*gl.Program
+	*Program
 	*LoopWindow
-	defaultBuffer        gl.Buffer
+	defaultBuffer        *Buffer
 	defaultBufferCreated bool
 }
 
-func NewGraphics(window *LoopWindow, program *gl.Program) *Graphics {
+func NewGraphics(window *LoopWindow, program *Program) *Graphics {
 	return &Graphics{
 		Program:              program,
 		LoopWindow:           window,
@@ -25,7 +24,7 @@ func NewGraphics(window *LoopWindow, program *gl.Program) *Graphics {
 
 func (self *Graphics) SetMat(mat Mat4) {
 	loc := self.Program.GetUniformLocation("mat")
-	loc.UniformMatrix4f(false, (*[16]float32)(&mat))
+	gl.UniformMatrix4fv(loc, 1, false, &mat[0])
 }
 
 func (self *Graphics) SetColor(c color.RGBA) {
@@ -35,13 +34,13 @@ func (self *Graphics) SetColor(c color.RGBA) {
 	a := float32(c.A) / float32(255)
 
 	loc := self.Program.GetUniformLocation("color")
-	loc.Uniform4f(r, g, b, a)
+	gl.Uniform4f(loc, r, g, b, a)
 }
 
-func (self *Graphics) Draw(mode gl.GLenum, verts []float32) {
+func (self *Graphics) Draw(mode uint32, verts []float32) {
 	self.bindDefaultBuffer()
-	gl.BufferData(gl.ARRAY_BUFFER, int(glh.Sizeof(gl.FLOAT))*len(verts), verts, gl.STATIC_DRAW)
-	gl.DrawArrays(mode, 0, len(verts))
+	gl.BufferData(gl.ARRAY_BUFFER, len(verts)*4, gl.Ptr(verts), gl.STATIC_DRAW)
+	gl.DrawArrays(mode, 0, int32(len(verts)))
 }
 
 func (self *Graphics) DrawRect(x, y, w, h float32) {
@@ -56,12 +55,12 @@ func (self *Graphics) DrawRect(x, y, w, h float32) {
 func (self *Graphics) bindDefaultBuffer() {
 	if !self.defaultBufferCreated {
 		log.Print("Creating default buffer")
-		self.defaultBuffer = gl.GenBuffer()
+		self.defaultBuffer = NewBuffer()
 		self.defaultBufferCreated = true
 	}
 
 	self.defaultBuffer.Bind(gl.ARRAY_BUFFER)
-	loc := self.Program.GetAttribLocation("position")
-	loc.EnableArray()
-	loc.AttribPointer(2, gl.FLOAT, false, 0, nil)
+	loc := uint32(self.Program.GetAttribLocation("position"))
+	gl.EnableVertexAttribArray(loc)
+	gl.VertexAttribPointer(loc, 2, gl.FLOAT, false, 0, nil)
 }

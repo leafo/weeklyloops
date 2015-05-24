@@ -4,7 +4,7 @@ import (
 	"image/color"
 	"math"
 
-	gl "github.com/go-gl/gl"
+	"github.com/go-gl/gl/v4.1-core/gl"
 	"github.com/leafo/weeklyloops/loops"
 )
 
