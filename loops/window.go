@@ -31,11 +31,10 @@ var programSolid2d = ProgramSource{
 				#version 330
 
 				uniform mat4 mat;
-
-				in vec2 position;
+				in vec2 v_position;
 
 				void main() {
-					gl_Position = mat * vec4(position, 0, 1);
+					gl_Position = mat * vec4(v_position, 0, 1);
 				}
 			`,
 		},

@@ -65,7 +65,7 @@ func (self *Graphics) bindDefaultBuffer() {
 	self.defaultBuffer.Bind(gl.ARRAY_BUFFER)
 	self.defaultVertexArray.Bind()
 
-	loc := uint32(self.Program.GetAttribLocation("position"))
+	loc := uint32(self.Program.GetAttribLocation("v_position"))
 	gl.EnableVertexAttribArray(loc)
 	gl.VertexAttribPointer(loc, 2, gl.FLOAT, false, 0, nil)
 }
