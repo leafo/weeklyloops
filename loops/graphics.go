@@ -79,6 +79,10 @@ func (self *Graphics) DrawColored(mode uint32, verts []float32) {
 	gl.DrawArrays(mode, 0, int32(numVerts))
 }
 
+func (self *Graphics) DrawShape(shape Shape) {
+	self.DrawColored(shape.DrawMode(), shape.Verts())
+}
+
 func (self *Graphics) bindBuffers() {
 	if !self.buffersCreated {
 		log.Print("Creating default buffer")
