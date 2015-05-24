@@ -40,8 +40,9 @@ func (self *Graphics) SetColor(c color.RGBA) {
 
 func (self *Graphics) Draw(mode uint32, verts []float32) {
 	self.bindDefaultBuffer()
+	numVerts := len(verts) / 2
 	gl.BufferData(gl.ARRAY_BUFFER, len(verts)*4, gl.Ptr(verts), gl.STATIC_DRAW)
-	gl.DrawArrays(mode, 0, int32(len(verts)))
+	gl.DrawArrays(mode, 0, int32(numVerts))
 }
 
 func (self *Graphics) DrawRect(x, y, w, h float32) {
