@@ -165,8 +165,8 @@ func (self *LoopWindow) Run() {
 	}
 
 	// load shaders
-	vertShader := Shader{gl.VERTEX_SHADER, defaultVert}
-	fragShader := Shader{gl.FRAGMENT_SHADER, defaultFrag}
+	vertShader := ShaderSource{gl.VERTEX_SHADER, defaultVert}
+	fragShader := ShaderSource{gl.FRAGMENT_SHADER, defaultFrag}
 	program := NewProgram(vertShader, fragShader)
 	program.Use()
 

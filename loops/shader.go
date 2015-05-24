@@ -9,7 +9,7 @@ import (
 	gl "github.com/go-gl/gl/v4.1-core/gl"
 )
 
-type Shader struct {
+type ShaderSource struct {
 	Type   uint32
 	Source string
 }
@@ -18,14 +18,14 @@ type Program struct {
 	Program uint32
 }
 
-func NewProgram(shaders ...Shader) Program {
+func NewProgram(shaders ...ShaderSource) Program {
 	program := gl.CreateProgram()
 
 	shaderIds := make([]uint32, 0)
 
-	for _, s := range shaders {
-		shader := gl.CreateShader(s.Type)
-		csource := gl.Str(s.Source + "\x00")
+	for _, source := range shaders {
+		shader := gl.CreateShader(source.Type)
+		csource := gl.Str(source.Source + "\x00")
 		gl.ShaderSource(shader, 1, &csource, nil)
 		gl.CompileShader(shader)
 
