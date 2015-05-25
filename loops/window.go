@@ -16,8 +16,8 @@ import (
 )
 
 var (
-	defaultWidth  = 400
-	defaultHeight = 400
+	defaultWidth  = 300
+	defaultHeight = 300
 	defaultTitle  = "loop"
 	defaultSpeed  = 1.0
 	record        = false
