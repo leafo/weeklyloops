@@ -1,6 +1,10 @@
 
 .PHONY: deps
 
+
+loop3: loop3.go loops/*.go
+	go build loop3.go
+
 loop2: loop2.go loops/*.go
 	go build loop2.go
 

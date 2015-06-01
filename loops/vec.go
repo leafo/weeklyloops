@@ -11,8 +11,8 @@ func degToRadians(deg float32) float32 {
 	return deg / 180 * math.Pi
 }
 
-func NewVec2() Vec2 {
-	return Vec2{}
+func NewVec2(x, y float32) Vec2 {
+	return Vec2{x, y}
 }
 
 func NewVec2FromAngle(deg float32) Vec2 {
