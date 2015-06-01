@@ -7,6 +7,8 @@ import (
 	"github.com/leafo/weeklyloops/loops"
 )
 
+var background = color.RGBA{28, 30, 22, 255}
+
 func main() {
 	loop := loops.NewLoopWindow()
 
@@ -25,19 +27,25 @@ func main() {
 			color.RGBA{209, 224, 183, 255},
 			color.RGBA{215, 241, 220, 255},
 			color.RGBA{242, 250, 250, 255},
+			color.RGBA{102, 120, 120, 255},
 		},
 	}
 
 	loop.Draw = func(t float64, g *loops.Graphics) {
+		g.SetColor(background)
+		g.SetMat(loops.NewIdentityMat4())
+		g.DrawRect(-1, -1, 2, 2)
+
 		//waver := math.Sin(t * math.Pi)
-		t = t + math.Cos(t*math.Pi*40)/50.0
+		t = t + math.Cos(t*math.Pi*30)/100.0
 
 		g.SetColor(color.RGBA{200, 200, 200, 255})
+
 		layers := 12
 		for i := 0; i < layers-1; i += 1 {
 			phase := (math.Sin(t*math.Pi*2+float64(i))+1.0)/6.0 + 2.0/3.0
 			scale := float64(layers-i)/float64(layers)/2.0 + 0.5
-			rot := t*math.Pi*2 + float64(i)
+			rot := -t*math.Pi*2/5.0*float64(i+1) + float64(i)
 
 			m := loops.NewIdentityMat4().
 				Scale(float32(phase), float32(phase), 1).
