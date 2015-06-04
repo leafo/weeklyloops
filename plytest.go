@@ -12,8 +12,11 @@ func main() {
 ply
 comment eat butt
 format dads
+element vertex 26
+element face 12
 end_header
 `)
 
 	log.Print(parser.ParseHeader())
+	log.Print(parser.Elements)
 }

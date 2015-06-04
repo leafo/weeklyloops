@@ -4,11 +4,20 @@ import (
 	"io/ioutil"
 	"log"
 	"regexp"
+	"strconv"
 )
 
+type PlyElement struct {
+	Name       string
+	Count      int
+	Properties []string
+}
+
 type Parser struct {
-	Buffer []byte
-	Pos    int
+	Buffer   []byte
+	Pos      int
+	Last     map[string]string
+	Elements []PlyElement
 }
 
 func NewParserFromFile(fname string) (*Parser, error) {
@@ -44,23 +53,39 @@ func (self *Parser) show() {
 }
 
 // read from head of buffer, advance position
-func (self *Parser) match(pat string) []byte {
-	pattern := regexp.MustCompile("^" + pat)
-	match := pattern.Find(self.Buffer[self.Pos:])
-	if match != nil {
-		log.Print("advancing head: ", len(match))
-		self.Pos += len(match)
-	}
-	return match
-}
+func (self *Parser) match(pat string) bool {
+	re := regexp.MustCompile("^" + pat)
+	matches := re.FindSubmatch(self.Buffer[self.Pos:])
 
-func (self *Parser) matchBool(pat string) bool {
-	return nil != self.match(pat)
+	if matches != nil && len(matches) > 0 {
+		log.Print("advancing head: ", len(matches[0]))
+		self.Pos += len(matches[0])
+
+		// extract matches
+		if len(re.SubexpNames()) > 1 {
+			self.Last = make(map[string]string)
+			for idx, key := range re.SubexpNames() {
+				if key == "" {
+					continue
+				}
+
+				self.Last[key] = string(matches[idx])
+			}
+
+			log.Print("Set last:", self.Last)
+		} else {
+			self.Last = nil
+		}
+
+		return true
+	}
+
+	return false
 }
 
 func (self *Parser) matchLine(str string) bool {
 	self.eatWhite()
-	return nil != self.match(regexp.QuoteMeta(str)+"(?:\n|$)")
+	return self.match(regexp.QuoteMeta(str) + "(?:\n|$)")
 }
 
 func (self *Parser) eatWhite() {
@@ -79,14 +104,32 @@ func (self *Parser) group(wrapped func() bool) bool {
 }
 
 func (self *Parser) parseComment() bool {
-	return self.matchBool("comment.*\n")
+	return self.match(`comment\b.*` + "\n")
 }
 
 func (self *Parser) parseFormat() bool {
-	return self.matchBool("format.*\n")
+	return self.match(`format\b.*` + "\n")
 }
 
 func (self *Parser) parseElement() bool {
+	if self.match(`element\s+(?P<name>\w+)\s+(?P<count>\d+)\s*` + "\n") {
+		count, err := strconv.Atoi(self.Last["count"])
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		element := PlyElement{
+			Name:  self.Last["name"],
+			Count: count,
+		}
+
+		// parse the rest of the element
+
+		self.Elements = append(self.Elements, element)
+		return true
+	}
+
 	return false
 }
 
@@ -100,6 +143,11 @@ func (self *Parser) ParseHeader() bool {
 			self.show()
 
 			if self.parseComment() || self.parseFormat() {
+				continue
+			}
+
+			if self.parseElement() {
+				log.Print("got element")
 				continue
 			}
 
