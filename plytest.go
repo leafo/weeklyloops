@@ -12,18 +12,24 @@ func main() {
 ply
 comment eat butt
 format dads
-element vertex 26
+element vertex 3
 property float x
 property float y
 property float z
 property float nx
 property float ny
 property float nz
-element face 12
-property list uchar uint vertex_indices
+property uchar red
+property uchar green
+property uchar blue
 end_header
+0.500000 -0.500000 -0.500000 0.000000 -0.000000 -1.000000 255 255 255
+-0.500000 -0.500000 -0.500000 0.000000 -0.000000 -1.000000 255 255 255
+-0.500000 0.500000 -0.500000 0.000000 -0.000000 -1.000000 255 255 255
 `)
 
-	log.Print(parser.ParseHeader())
-	log.Print(parser.Elements)
+	if parser.ParseHeader() {
+		object := parser.ParseBody()
+		log.Print(object)
+	}
 }
