@@ -1,6 +1,11 @@
 
 .PHONY: deps
 
+plytest: plytest.go loops/*.go loops/ply/*.go
+	go build plytest.go
+
+loop4: loop4.go loops/*.go
+	go build loop4.go
 
 loop3: loop3.go loops/*.go
 	go build loop3.go
