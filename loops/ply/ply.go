@@ -216,6 +216,56 @@ func (self *Parser) ParseHeader() bool {
 	})
 }
 
+func (self *Parser) parsePropertyMatrix(element *PlyElement) {
+	for line := 0; line < element.Count; line += 1 {
+		tuple := make([]float64, len(element.Properties))
+		for p := 0; p < len(element.Properties); p += 1 {
+			if self.ParseNumber() {
+				n, err := strconv.ParseFloat(self.Last["number"], 64)
+
+				if err != nil {
+					log.Fatal("failed to parse number:" + self.Last["number"])
+				}
+
+				tuple[p] = n
+			}
+			self.eatWhite()
+		}
+
+		element.Tuples = append(element.Tuples, tuple)
+	}
+}
+
+func (self *Parser) parseListTuples(element *PlyElement) {
+	for line := 0; line < element.Count; line += 1 {
+		if !self.ParseNumber() {
+			log.Fatal("failed to get number of items for list tuple")
+		}
+
+		count, err := strconv.Atoi(self.Last["number"])
+
+		if err != nil {
+			log.Fatal("failed to parse number of items for list tuple")
+		}
+
+		self.eatWhite()
+		tuple := make([]float64, count)
+		for p := 0; p < count; p += 1 {
+			if self.ParseNumber() {
+				n, err := strconv.ParseFloat(self.Last["number"], 64)
+
+				if err != nil {
+					log.Fatal("failed to parse number for list:" + self.Last["number"])
+				}
+
+				tuple[p] = n
+			}
+			self.eatWhite()
+		}
+		element.Tuples = append(element.Tuples, tuple)
+	}
+}
+
 func (self *Parser) ParseBody() *PlyObject {
 	if len(self.Elements) == 0 {
 		log.Fatal("No elements were parsed from header")
@@ -226,22 +276,10 @@ func (self *Parser) ParseBody() *PlyObject {
 	}
 
 	for _, element := range self.Elements {
-		for line := 0; line < element.Count; line += 1 {
-			tuple := make([]float64, len(element.Properties))
-			for p := 0; p < len(element.Properties); p += 1 {
-				if self.ParseNumber() {
-					n, err := strconv.ParseFloat(self.Last["number"], 64)
-
-					if err != nil {
-						log.Fatal("failed to parse number:" + self.Last["number"])
-					}
-
-					tuple[p] = n
-				}
-				self.eatWhite()
-			}
-
-			element.Tuples = append(element.Tuples, tuple)
+		if element.isList() {
+			self.parseListTuples(&element)
+		} else {
+			self.parsePropertyMatrix(&element)
 		}
 
 		object.Elements[element.Name] = element

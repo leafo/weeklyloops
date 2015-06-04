@@ -22,10 +22,14 @@ property float nz
 property uchar red
 property uchar green
 property uchar blue
+element face 2
+property list uchar uint vertex_indices
 end_header
 0.500000 -0.500000 -0.500000 0.000000 -0.000000 -1.000000 255 255 255
 -0.500000 -0.500000 -0.500000 0.000000 -0.000000 -1.000000 255 255 255
 -0.500000 0.500000 -0.500000 0.000000 -0.000000 -1.000000 255 255 255
+3 0 1 2
+3 3 4 5
 `)
 
 	if parser.ParseHeader() {
