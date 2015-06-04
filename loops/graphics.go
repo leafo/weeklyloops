@@ -15,12 +15,18 @@ type Graphics struct {
 
 	currentMat   Mat4
 	currentColor color.RGBA
+
+	programSolid2d   Program
+	programColored2d Program
 }
 
 func NewGraphics(window *LoopWindow) *Graphics {
 	return &Graphics{
 		LoopWindow:     window,
 		buffersCreated: false,
+
+		programSolid2d:   NewProgram(programSolid2d.ShaderSources...),
+		programColored2d: NewProgram(programColored2d.ShaderSources...),
 	}
 }
 
@@ -33,7 +39,7 @@ func (self *Graphics) SetColor(c color.RGBA) {
 }
 
 func (self *Graphics) Draw(mode uint32, verts []float32) {
-	program := self.LoopWindow.programSolid2d
+	program := self.programSolid2d
 
 	self.bindBuffers()
 	self.bindProgram(program)
@@ -59,7 +65,7 @@ func (self *Graphics) DrawRect(x, y, w, h float32) {
 
 // v = [ [x,y,r,g,b,a], ... ]
 func (self *Graphics) DrawColored(mode uint32, verts []float32) {
-	program := self.LoopWindow.programColored2d
+	program := self.programColored2d
 
 	numVerts := len(verts) / 6
 

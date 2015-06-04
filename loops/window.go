@@ -23,85 +23,19 @@ var (
 	record        = false
 )
 
-var programSolid2d = ProgramSource{
-	[]ShaderSource{
-		ShaderSource{
-			gl.VERTEX_SHADER,
-			`
-				#version 330
-
-				uniform mat4 mat;
-				in vec2 v_position;
-
-				void main() {
-					gl_Position = mat * vec4(v_position, 0, 1);
-				}
-			`,
-		},
-		ShaderSource{
-			gl.FRAGMENT_SHADER,
-			`
-				#version 330
-				uniform vec4 color;
-				out vec4 fragColor;
-
-				void main() {
-					fragColor = color;
-				}
-			`,
-		},
-	},
-}
-
-var programColored2d = ProgramSource{
-	[]ShaderSource{
-		ShaderSource{
-			gl.VERTEX_SHADER,
-			`
-				#version 330
-
-				uniform mat4 mat;
-				in vec2 v_position;
-				in vec4 v_color;
-				out vec4 f_color;
-
-				void main() {
-					f_color = v_color;
-					gl_Position = mat * vec4(v_position, 0, 1);
-				}
-			`,
-		},
-		ShaderSource{
-			gl.FRAGMENT_SHADER,
-			`
-				#version 330
-				uniform vec4 color;
-				in vec4 f_color;
-				out vec4 fragColor;
-
-				void main() {
-					fragColor = color * f_color;
-				}
-			`,
-		},
-	},
-}
-
 type UpdateFunc func(float64)
 type DrawFunc func(float64, *Graphics)
 type LoadFunc func()
 
 type LoopWindow struct {
-	Width            int
-	Height           int
-	Update           UpdateFunc
-	Draw             DrawFunc
-	Load             LoadFunc
-	Window           *glfw.Window
-	Title            string
-	Speed            float64
-	programSolid2d   Program
-	programColored2d Program
+	Width  int
+	Height int
+	Update UpdateFunc
+	Draw   DrawFunc
+	Load   LoadFunc
+	Window *glfw.Window
+	Title  string
+	Speed  float64
 }
 
 func init() {
@@ -215,9 +149,6 @@ func (self *LoopWindow) Run() {
 	if err := gl.Init(); err != nil {
 		log.Fatal("Failed to init gl")
 	}
-
-	self.programSolid2d = NewProgram(programSolid2d.ShaderSources...)
-	self.programColored2d = NewProgram(programColored2d.ShaderSources...)
 
 	gl.ClearColor(0.2, 0.2, 0.2, 0)
 
