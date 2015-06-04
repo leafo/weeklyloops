@@ -13,6 +13,12 @@ ply
 comment eat butt
 format dads
 element vertex 26
+property float x
+property float y
+property float z
+property float nx
+property float ny
+property float nz
 element face 12
 end_header
 `)

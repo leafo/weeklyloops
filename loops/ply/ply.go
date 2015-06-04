@@ -7,10 +7,15 @@ import (
 	"strconv"
 )
 
+type PlyProperty struct {
+	Type string
+	Name string
+}
+
 type PlyElement struct {
 	Name       string
 	Count      int
-	Properties []string
+	Properties []PlyProperty
 }
 
 type Parser struct {
@@ -112,25 +117,45 @@ func (self *Parser) parseFormat() bool {
 }
 
 func (self *Parser) parseElement() bool {
-	if self.match(`element\s+(?P<name>\w+)\s+(?P<count>\d+)\s*` + "\n") {
-		count, err := strconv.Atoi(self.Last["count"])
+	return self.group(func() bool {
+		if self.match(`element\s+(?P<name>\w+)\s+(?P<count>\d+)\s*` + "\n") {
+			count, err := strconv.Atoi(self.Last["count"])
 
-		if err != nil {
-			log.Fatal(err)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			element := PlyElement{
+				Name:  self.Last["name"],
+				Count: count,
+			}
+
+			for {
+				prop := self.parseProperty()
+				if prop == nil {
+					break
+				} else {
+					element.Properties = append(element.Properties, *prop)
+				}
+			}
+
+			self.Elements = append(self.Elements, element)
+			return true
 		}
 
-		element := PlyElement{
-			Name:  self.Last["name"],
-			Count: count,
+		return false
+	})
+}
+
+func (self *Parser) parseProperty() *PlyProperty {
+	if self.match(`property\s+(?P<type>\w+)\s+(?P<name>\w+)\s*` + "\n") {
+		return &PlyProperty{
+			Name: self.Last["name"],
+			Type: self.Last["type"],
 		}
-
-		// parse the rest of the element
-
-		self.Elements = append(self.Elements, element)
-		return true
 	}
 
-	return false
+	return nil
 }
 
 func (self *Parser) ParseHeader() bool {
