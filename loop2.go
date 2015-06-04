@@ -21,7 +21,7 @@ var colors = []color.RGBA{
 func main() {
 	loop := loops.NewLoopWindow()
 
-	loop.Title = "loop2"
+	loop.Title = "loop3"
 	loop.Speed = 0.2
 
 	rect := loops.NewRectangle(1.2, 0.5)
