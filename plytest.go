@@ -20,6 +20,7 @@ property float nx
 property float ny
 property float nz
 element face 12
+property list uchar uint vertex_indices
 end_header
 `)
 

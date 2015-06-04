@@ -10,6 +10,13 @@ import (
 type PlyProperty struct {
 	Type string
 	Name string
+
+	ListCountType string
+	ListItemType  string
+}
+
+func (self *PlyProperty) isList() bool {
+	return self.Type == "list"
 }
 
 type PlyElement struct {
@@ -48,10 +55,10 @@ func NewParserFromString(str string) (*Parser, error) {
 func (self *Parser) show() {
 	stop := self.Pos
 	for i := self.Pos + 1; i < len(self.Buffer)-1; i += 1 {
+		stop = i
 		if '\n' == self.Buffer[i] {
 			break
 		}
-		stop = i
 	}
 
 	log.Print("LOCATION: ", string(self.Buffer[self.Pos:stop]))
@@ -63,7 +70,6 @@ func (self *Parser) match(pat string) bool {
 	matches := re.FindSubmatch(self.Buffer[self.Pos:])
 
 	if matches != nil && len(matches) > 0 {
-		log.Print("advancing head: ", len(matches[0]))
 		self.Pos += len(matches[0])
 
 		// extract matches
@@ -148,10 +154,21 @@ func (self *Parser) parseElement() bool {
 }
 
 func (self *Parser) parseProperty() *PlyProperty {
+	// property float x
 	if self.match(`property\s+(?P<type>\w+)\s+(?P<name>\w+)\s*` + "\n") {
 		return &PlyProperty{
 			Name: self.Last["name"],
 			Type: self.Last["type"],
+		}
+	}
+
+	// property list uchar uint vertex_indices
+	if self.match(`property\s+list\s+(?P<count_type>\w+)\s+(?P<item_type>\w+)\s+(?P<name>\w+)\s*` + "\n") {
+		return &PlyProperty{
+			Name:          self.Last["name"],
+			Type:          "list",
+			ListCountType: self.Last["count_type"],
+			ListItemType:  self.Last["item_type"],
 		}
 	}
 
@@ -172,7 +189,6 @@ func (self *Parser) ParseHeader() bool {
 			}
 
 			if self.parseElement() {
-				log.Print("got element")
 				continue
 			}
 
