@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	// parser, _ := ply.NewParserFromFile("cube.ply")
+	//parser, _ := ply.NewParserFromFile("cube.ply")
 	parser, _ := ply.NewParserFromString(`
 ply
 comment eat butt
@@ -25,15 +25,17 @@ property uchar blue
 element face 2
 property list uchar uint vertex_indices
 end_header
-0.500000 -0.500000 -0.500000 0.000000 -0.000000 -1.000000 255 255 255
--0.500000 -0.500000 -0.500000 0.000000 -0.000000 -1.000000 255 255 255
--0.500000 0.500000 -0.500000 0.000000 -0.000000 -1.000000 255 255 255
+0.100000 -0.910000 -0.500000 0.000000 -0.000000 -1.000000 255 255 255
+-0.200000 -0.920000 -0.500000 0.000000 -0.000000 -1.000000 255 255 255
+-0.300000 0.930000 -0.500000 0.000000 -0.000000 -1.000000 255 255 255
 3 0 1 2
 3 3 4 5
-`)
+	`)
 
 	if parser.ParseHeader() {
 		object := parser.ParseBody()
-		log.Print(object)
+		// object.Pack("hello", "world")
+		v := object.Elements["vertex"]
+		log.Print(v.PackF32("x", "y"))
 	}
 }
