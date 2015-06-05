@@ -35,7 +35,6 @@ end_header
 	if parser.ParseHeader() {
 		object := parser.ParseBody()
 		// object.Pack("hello", "world")
-		v := object.Elements["vertex"]
-		log.Print(v.PackF32("x", "y"))
+		log.Print(object.PackF32("x", "y"))
 	}
 }
