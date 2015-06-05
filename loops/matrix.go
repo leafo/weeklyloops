@@ -35,9 +35,12 @@ func NewScaleMatrix(sx, sy, sz float32) Mat4 {
 }
 
 func NewRotate2DMatrix(theta float32) Mat4 {
+	c := float32(math.Cos(float64(theta)))
+	s := float32(math.Sin(float64(theta)))
+
 	return Mat4{
-		float32(math.Cos(float64(theta))), float32(math.Sin(float64(theta))), 0, 0,
-		-float32(math.Sin(float64(theta))), float32(math.Cos(float64(theta))), 0, 0,
+		c, s, 0, 0,
+		-s, c, 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1,
 	}
