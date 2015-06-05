@@ -46,6 +46,24 @@ func NewRotate2DMatrix(theta float32) Mat4 {
 	}
 }
 
+func NewRotateMatrix(theta, x, y, z float32) Mat4 {
+	dir := NewVec3(x, y, z).Normalize()
+	c := float32(math.Cos(float64(theta)))
+	s := float32(math.Sin(float64(theta)))
+
+	x = dir[0]
+	y = dir[1]
+	z = dir[2]
+	c1 := 1 - c
+
+	return Mat4{
+		x*x*c1 + c, x*y*c1 - z*s, x*z*c1 + y*s, 0,
+		y*x*c1 + z*s, y*y*c1 + c, y*z*c1 - x*s, 0,
+		x*z*c1 - y*s, y*z*c1 + x*s, z*z*c1 + c, 0,
+		0, 0, 0, 1,
+	}.Transpose()
+}
+
 // fov: field of view in degrees
 // aspect: width/height
 func NewPerspectiveMatrix(fovy, aspect, zNear, zFar float64) Mat4 {
@@ -53,7 +71,6 @@ func NewPerspectiveMatrix(fovy, aspect, zNear, zFar float64) Mat4 {
 	f := math.Tan(fovy / 2.0)
 	nearFar := zNear - zFar
 
-	// transpose me
 	return Mat4{
 		float32(f / aspect), 0, 0, 0,
 		0, float32(f), 0, 0,
@@ -105,6 +122,10 @@ func (self Mat4) Scale(sx, sy, sz float32) Mat4 {
 
 func (self Mat4) Rotate(theta float32) Mat4 {
 	return self.Mul(NewRotate2DMatrix(theta))
+}
+
+func (self Mat4) Rotate3d(theta, x, y, z float32) Mat4 {
+	return self.Mul(NewRotateMatrix(theta, x, y, z))
 }
 
 func (self Mat4) Transpose() Mat4 {

@@ -27,7 +27,8 @@ func main() {
 
 	loop.Draw = func(t float64, g *loops.Graphics) {
 		m := loops.NewIdentityMat4().
-			Translate(2, 2, float32(-3+-1*math.Sin(t*math.Pi*2*3))).
+			Rotate3d(float32(t*math.Pi*2), 0, 1, 0).
+			Translate(2, 2, float32(-3+-0.5*math.Sin(t*math.Pi*2*3))).
 			Rotate(float32(t * math.Pi * 2)).
 			Mul(perspective)
 
