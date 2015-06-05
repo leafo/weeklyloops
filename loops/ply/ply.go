@@ -1,6 +1,7 @@
 package ply
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"regexp"
@@ -12,6 +13,20 @@ type Parser struct {
 	Pos      int
 	Last     map[string]string
 	Elements []PlyElement
+}
+
+func NewObjectFromFile(fname string) (*PlyObject, error) {
+	parser, err := NewParserFromFile("cube.ply")
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !parser.ParseHeader() {
+		return nil, fmt.Errorf("failed to parse header")
+	}
+
+	return parser.ParseBody(), nil
 }
 
 func NewParserFromFile(fname string) (*Parser, error) {
