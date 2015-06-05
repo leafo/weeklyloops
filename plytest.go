@@ -36,5 +36,6 @@ end_header
 		object := parser.ParseBody()
 		// object.Pack("hello", "world")
 		log.Print(object.PackF32("x", "y"))
+		log.Print(object.PackIndexesB())
 	}
 }

@@ -34,6 +34,11 @@ func (self *PlyObject) PackF32(names ...string) []float32 {
 	return element.PackF32(names...)
 }
 
+func (self *PlyObject) PackIndexesB() []byte {
+	element := self.Elements["face"]
+	return element.PackIndexesB()
+}
+
 func (self *PlyElement) PackF32(names ...string) []float32 {
 	propertyIdxs := make([]int, 0, len(names))
 
@@ -53,13 +58,28 @@ func (self *PlyElement) PackF32(names ...string) []float32 {
 		}
 	}
 
-	out := make([]float32, 0)
+	out := make([]float32, len(self.Tuples)*len(propertyIdxs))
 
+	k := 0
 	for _, t := range self.Tuples {
 		for _, idx := range propertyIdxs {
-			out = append(out, float32(t[idx]))
+			out[k] = float32(t[idx])
+			k += 1
 		}
 
+	}
+
+	return out
+}
+
+func (self *PlyElement) PackIndexesB() []byte {
+	out := make([]byte, len(self.Tuples)*len(self.Tuples[0]))
+	k := 0
+	for _, t := range self.Tuples {
+		for _, v := range t {
+			out[k] = byte(v)
+			k += 1
+		}
 	}
 
 	return out
