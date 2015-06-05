@@ -78,10 +78,13 @@ var programSolid3d = ProgramSource{
 				uniform mat4 mat;
 				in vec3 v_position;
 				in vec3 v_normal;
+
+				out vec3 f_position;
 				out vec3 f_normal;
 
 				void main() {
 					f_normal = v_normal;
+					f_position = vec3(mat * vec4(v_position, 1));
 					gl_Position = mat * vec4(v_position, 1);
 				}
 			`,
@@ -91,11 +94,16 @@ var programSolid3d = ProgramSource{
 			`
 				#version 330
 				uniform vec4 color;
+
 				in vec3 f_normal;
+				in vec3 f_position;
+
 				out vec4 fragColor;
 
 				void main() {
-					fragColor = color;
+					vec3 cam = vec3(0,0,0);
+					vec3 at_cam = cam - f_position;
+					fragColor = vec4(vec3(1,1,1) * dot(at_cam, f_normal), 1);
 				}
 			`,
 		},

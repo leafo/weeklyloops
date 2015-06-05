@@ -102,9 +102,9 @@ func (self *Graphics) Draw3d(mode uint32, verts []float32, indexes []byte) {
 	gl.EnableVertexAttribArray(loc)
 	gl.VertexAttribPointer(loc, 3, gl.FLOAT, false, 6*4, gl.PtrOffset(0))
 
-	// loc = uint32(program.GetAttribLocation("v_normal"))
-	// gl.EnableVertexAttribArray(loc)
-	// gl.VertexAttribPointer(loc, 3, gl.FLOAT, false, 6*4, gl.PtrOffset(3*4))
+	loc = uint32(program.GetAttribLocation("v_normal"))
+	gl.EnableVertexAttribArray(loc)
+	gl.VertexAttribPointer(loc, 3, gl.FLOAT, false, 6*4, gl.PtrOffset(3*4))
 
 	gl.DrawElements(mode, int32(len(indexes)), gl.UNSIGNED_BYTE, gl.Ptr(indexes))
 }

@@ -175,7 +175,7 @@ func (self *LoopWindow) Run() {
 	log.Print("Running loop")
 	for !window.ShouldClose() {
 		gl.Viewport(0, 0, int32(self.Width), int32(self.Height))
-		gl.Clear(gl.COLOR_BUFFER_BIT)
+		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
 		newTime := glfw.GetTime()
 		if time != 0 {
@@ -199,4 +199,13 @@ func (self *LoopWindow) Run() {
 	}
 
 	log.Print("Finished")
+}
+
+func (self *LoopWindow) Enable3d() {
+	gl.Enable(gl.DEPTH_TEST)
+	gl.DepthFunc(gl.LESS)
+}
+
+func (self *LoopWindow) Disable3d() {
+	gl.Disable(gl.DEPTH_TEST)
 }
