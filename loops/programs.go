@@ -109,7 +109,7 @@ var programSolid3d = ProgramSource{
 				void main() {
 					vec3 cam = vec3(0,0,0);
 					vec3 at_cam = cam - f_position;
-					fragColor = vec4(color.rgb * max(0.3, dot(normalize(at_cam), f_normal)), color);
+					fragColor = vec4(color.rgb * max(0.3, dot(normalize(at_cam), f_normal)), color.a);
 				}
 			`,
 		},

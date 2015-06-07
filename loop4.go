@@ -1,6 +1,7 @@
 package main
 
 import (
+	"image/color"
 	"log"
 	"math"
 
@@ -8,6 +9,9 @@ import (
 	"github.com/leafo/weeklyloops/loops"
 	"github.com/leafo/weeklyloops/loops/ply"
 )
+
+var background = color.RGBA{28, 30, 22, 255}
+var foreground = color.RGBA{215, 241, 220, 255}
 
 func main() {
 	loop := loops.NewLoopWindow()
@@ -23,11 +27,20 @@ func main() {
 	verts := obj.PackF32("x", "y", "z", "nx", "ny", "nz")
 	indexes := obj.PackIndexesB()
 
+	identity := loops.NewIdentityMat4()
 	perspective := loops.NewPerspectiveMatrix(60, 1, 0.1, 100)
 
 	loop.Draw = func(t float64, g *loops.Graphics) {
+		loop.Disable3d()
+
+		g.SetViewMat(identity)
+		g.SetMat(identity)
+		g.SetColor(background)
+		g.DrawRect(-1, -1, 2, 2)
+
 		loop.Enable3d()
 		g.SetViewMat(perspective)
+		g.SetColor(foreground)
 
 		drawCube := func(t float64, scale float64) {
 			m := loops.NewIdentityMat4().

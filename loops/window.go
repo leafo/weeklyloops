@@ -106,14 +106,14 @@ func (self *LoopWindow) Record(graphics *Graphics) {
 	numFrames := 120
 
 	gl.Viewport(0, 0, int32(self.Width), int32(self.Height))
-	gl.Clear(gl.COLOR_BUFFER_BIT)
+	gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
 	self.Draw(0.0, graphics)
 	self.Window.SwapBuffers()
 
 	for i := 0; i < numFrames; i++ {
 		gl.Viewport(0, 0, int32(self.Width), int32(self.Height))
-		gl.Clear(gl.COLOR_BUFFER_BIT)
+		gl.Clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
 		self.Draw(float64(i)/float64(numFrames), graphics)
 		self.Window.SwapBuffers()
