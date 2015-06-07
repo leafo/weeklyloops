@@ -27,16 +27,24 @@ func main() {
 
 	loop.Draw = func(t float64, g *loops.Graphics) {
 		loop.Enable3d()
-
-		m := loops.NewIdentityMat4().
-			Rotate3d(float32(t*math.Pi*2), 0, 1, 0).
-			Translate(2, 2, float32(-3+-0.5*math.Sin(t*math.Pi*2*3))).
-			Rotate(float32(t * math.Pi * 2))
-
-		g.SetMat(m)
 		g.SetViewMat(perspective)
 
-		g.Draw3d(gl.TRIANGLES, verts, indexes)
+		drawCube := func(t float64, scale float64) {
+			m := loops.NewIdentityMat4().
+				Rotate3d(float32(t*math.Pi*2), 0, 1, 0).
+				Translate(2, 2, float32(-3+-0.5*math.Sin(t*math.Pi*2*3)*scale)).
+				Rotate(float32(t * math.Pi * 2))
+
+			g.SetMat(m)
+
+			g.Draw3d(gl.TRIANGLES, verts, indexes)
+
+		}
+
+		drawCube(t+math.Sin((t+0.75)*math.Pi*2)*0.05, 1)
+		drawCube(t+0.25+math.Sin((t+0.5)*math.Pi*2)*0.05, -1)
+		drawCube(t+0.5+math.Sin((t+0.25)*math.Pi*2)*0.05, 1)
+		drawCube(t+0.75+math.Sin(t*math.Pi*2)*0.05, -1)
 	}
 
 	loop.Run()
