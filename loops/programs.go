@@ -89,7 +89,7 @@ var programSolid3d = ProgramSource{
 				out vec3 f_normal;
 
 				void main() {
-					f_normal = v_normal;
+					f_normal = vec3(object_mat * vec4(v_normal, 0));
 					f_position = vec3(object_mat * vec4(v_position, 1));
 					gl_Position = view_mat * object_mat * vec4(v_position, 1);
 				}
@@ -109,7 +109,7 @@ var programSolid3d = ProgramSource{
 				void main() {
 					vec3 cam = vec3(0,0,0);
 					vec3 at_cam = cam - f_position;
-					fragColor = vec4(vec3(1,1,1) * dot(normalize(at_cam), f_normal), 1);
+					fragColor = vec4(color.rgb * max(0.3, dot(normalize(at_cam), f_normal)), color);
 				}
 			`,
 		},
