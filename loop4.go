@@ -42,10 +42,10 @@ func main() {
 		g.SetViewMat(perspective)
 		g.SetColor(foreground)
 
-		drawCube := func(t float64, scale float64) {
+		drawCube := func(t, scale, dist float64) {
 			m := loops.NewIdentityMat4().
 				Rotate3d(float32(t*math.Pi*2), 0, 1, 0).
-				Translate(2, 2, float32(-3+-0.5*math.Sin(t*math.Pi*2*3)*scale)).
+				Translate(2, 2, float32(dist+-0.2*math.Sin(t*math.Pi*2*3)*scale)).
 				Rotate(float32(t * math.Pi * 2))
 
 			g.SetMat(m)
@@ -54,10 +54,37 @@ func main() {
 
 		}
 
-		drawCube(t+math.Sin((t+0.75)*math.Pi*2)*0.05, 1)
-		drawCube(t+0.25+math.Sin((t+0.5)*math.Pi*2)*0.05, -1)
-		drawCube(t+0.5+math.Sin((t+0.25)*math.Pi*2)*0.05, 1)
-		drawCube(t+0.75+math.Sin(t*math.Pi*2)*0.05, -1)
+		drawGroup := func(t, dist float64) {
+			drawCube(t+math.Sin((t+0.75)*math.Pi*2)*0.05, 1, dist)
+			drawCube(t+0.25+math.Sin((t+0.5)*math.Pi*2)*0.05, -1, dist)
+			drawCube(t+0.5+math.Sin((t+0.25)*math.Pi*2)*0.05, 1, dist)
+			drawCube(t+0.75+math.Sin(t*math.Pi*2)*0.05, -1, dist)
+		}
+
+		{
+
+			g.SetColor(color.RGBA{242, 250, 250, 255})
+			drawGroup(t+.7, -48*2)
+
+			g.SetColor(color.RGBA{215, 241, 220, 255})
+			drawGroup(t+.1, -48)
+
+			g.SetColor(color.RGBA{209, 224, 183, 255})
+			drawGroup(t+.5, -24)
+
+			g.SetColor(color.RGBA{210, 187, 160, 255})
+			drawGroup(t+.8, -12)
+
+			g.SetColor(color.RGBA{198, 137, 155, 255})
+			drawGroup(t+.3, -6)
+
+			g.SetColor(color.RGBA{174, 111, 184, 255})
+
+			drawGroup(t+0.6, -4)
+
+			g.SetColor(color.RGBA{94, 92, 170, 255})
+			drawGroup(t, -2)
+		}
 	}
 
 	loop.Run()
