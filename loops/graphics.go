@@ -13,7 +13,8 @@ type Graphics struct {
 	defaultVertexArray *VertexArray
 	buffersCreated     bool
 
-	currentMat   Mat4
+	objectMat    Mat4
+	viewMat      Mat4
 	currentColor color.RGBA
 
 	programSolid2d   Program
@@ -26,6 +27,9 @@ func NewGraphics(window *LoopWindow) *Graphics {
 		LoopWindow:     window,
 		buffersCreated: false,
 
+		objectMat: NewIdentityMat4(),
+		viewMat:   NewIdentityMat4(),
+
 		programSolid2d:   NewProgram(programSolid2d.ShaderSources...),
 		programColored2d: NewProgram(programColored2d.ShaderSources...),
 		programSolid3d:   NewProgram(programSolid3d.ShaderSources...),
@@ -33,7 +37,11 @@ func NewGraphics(window *LoopWindow) *Graphics {
 }
 
 func (self *Graphics) SetMat(mat Mat4) {
-	self.currentMat = mat
+	self.objectMat = mat
+}
+
+func (self *Graphics) SetViewMat(mat Mat4) {
+	self.viewMat = mat
 }
 
 func (self *Graphics) SetColor(c color.RGBA) {
@@ -124,8 +132,11 @@ func (self *Graphics) bindBuffers() {
 
 func (self *Graphics) bindProgram(program Program) {
 	program.Use()
-	loc := program.GetUniformLocation("mat")
-	gl.UniformMatrix4fv(loc, 1, false, &self.currentMat[0])
+	loc := program.GetUniformLocation("object_mat")
+	gl.UniformMatrix4fv(loc, 1, false, &self.objectMat[0])
+
+	loc = program.GetUniformLocation("view_mat")
+	gl.UniformMatrix4fv(loc, 1, false, &self.viewMat[0])
 
 	c := self.currentColor
 	r := float32(c.R) / float32(255)

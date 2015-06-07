@@ -31,10 +31,11 @@ func main() {
 		m := loops.NewIdentityMat4().
 			Rotate3d(float32(t*math.Pi*2), 0, 1, 0).
 			Translate(2, 2, float32(-3+-0.5*math.Sin(t*math.Pi*2*3))).
-			Rotate(float32(t * math.Pi * 2)).
-			Mul(perspective)
+			Rotate(float32(t * math.Pi * 2))
 
 		g.SetMat(m)
+		g.SetViewMat(perspective)
+
 		g.Draw3d(gl.TRIANGLES, verts, indexes)
 	}
 

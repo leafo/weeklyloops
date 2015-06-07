@@ -11,11 +11,13 @@ var programSolid2d = ProgramSource{
 			`
 				#version 330
 
-				uniform mat4 mat;
+				uniform mat4 object_mat;
+				uniform mat4 view_mat;
+
 				in vec2 v_position;
 
 				void main() {
-					gl_Position = mat * vec4(v_position, 0, 1);
+					gl_Position = view_mat * object_mat * vec4(v_position, 0, 1);
 				}
 			`,
 		},
@@ -41,14 +43,16 @@ var programColored2d = ProgramSource{
 			`
 				#version 330
 
-				uniform mat4 mat;
+				uniform mat4 object_mat;
+				uniform mat4 view_mat;
+
 				in vec2 v_position;
 				in vec4 v_color;
 				out vec4 f_color;
 
 				void main() {
 					f_color = v_color;
-					gl_Position = mat * vec4(v_position, 0, 1);
+					gl_Position = view_mat * object_mat * vec4(v_position, 0, 1);
 				}
 			`,
 		},
@@ -75,7 +79,9 @@ var programSolid3d = ProgramSource{
 			`
 				#version 330
 
-				uniform mat4 mat;
+				uniform mat4 object_mat;
+				uniform mat4 view_mat;
+
 				in vec3 v_position;
 				in vec3 v_normal;
 
@@ -84,8 +90,8 @@ var programSolid3d = ProgramSource{
 
 				void main() {
 					f_normal = v_normal;
-					f_position = vec3(mat * vec4(v_position, 1));
-					gl_Position = mat * vec4(v_position, 1);
+					f_position = vec3(object_mat * vec4(v_position, 1));
+					gl_Position = view_mat * object_mat * vec4(v_position, 1);
 				}
 			`,
 		},
@@ -103,7 +109,7 @@ var programSolid3d = ProgramSource{
 				void main() {
 					vec3 cam = vec3(0,0,0);
 					vec3 at_cam = cam - f_position;
-					fragColor = vec4(vec3(1,1,1) * dot(at_cam, f_normal), 1);
+					fragColor = vec4(vec3(1,1,1) * dot(normalize(at_cam), f_normal), 1);
 				}
 			`,
 		},

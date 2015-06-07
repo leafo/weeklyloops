@@ -136,7 +136,7 @@ func (self *LoopWindow) Run() {
 	window, err := glfw.CreateWindow(self.Width, self.Height, self.Title, nil, nil)
 
 	if err != nil {
-		log.Fatal("Failed to create window")
+		log.Fatal("Failed to create window: ", err)
 	}
 
 	self.Window = window
