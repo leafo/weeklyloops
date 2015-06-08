@@ -30,3 +30,19 @@ func (self Vec3) Normalize() Vec3 {
 		self[2] / length,
 	}
 }
+
+func (self Vec3) Add(other Vec3) Vec3 {
+	return Vec3{
+		self[0] + other[0],
+		self[1] + other[1],
+		self[2] + other[2],
+	}
+}
+
+func (self Vec3) Scale(s float32) Vec3 {
+	return Vec3{
+		self[0] * s,
+		self[1] * s,
+		self[2] * s,
+	}
+}

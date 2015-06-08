@@ -116,6 +116,10 @@ func (self Mat4) Translate(tx, ty, tz float32) Mat4 {
 	return self.Mul(NewTranslateMatrix(tx, ty, tz))
 }
 
+func (self Mat4) TranslateVec3(v Vec3) Mat4 {
+	return self.Mul(NewTranslateMatrix(v[0], v[1], v[2]))
+}
+
 func (self Mat4) Scale(sx, sy, sz float32) Mat4 {
 	return self.Mul(NewScaleMatrix(sx, sy, sz))
 }
