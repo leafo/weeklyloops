@@ -1,20 +1,12 @@
 
-.PHONY: deps
+.PHONY: deps default all
 
-loop4: loop4.go loops/*.go
-	go build loop4.go
+default: loop5
 
-loop3: loop3.go loops/*.go
-	go build loop3.go
+all: loop1 loop2 loop3 loop4 loop5
 
-loop2: loop2.go loops/*.go
-	go build loop2.go
-
-loop1: loop1.go loops/*.go
-	go build loop1.go
-
-plytest: plytest.go loops/*.go loops/ply/*.go
-	go build plytest.go
+%: %.go loops/*.go loops/ply/*.go
+	go build $<
 
 deps: 
 	go get github.com/go-gl/gl/v4.1-core/gl
