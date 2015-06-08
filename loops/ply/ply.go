@@ -16,7 +16,7 @@ type Parser struct {
 }
 
 func NewObjectFromFile(fname string) (*PlyObject, error) {
-	parser, err := NewParserFromFile("cube.ply")
+	parser, err := NewParserFromFile(fname)
 
 	if err != nil {
 		return nil, err
