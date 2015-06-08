@@ -40,6 +40,10 @@ func (self *Particle3d) SetMass(mass float64) {
 	self.inverseMass = 1 / mass
 }
 
+func (self *Particle3d) Mass() float64 {
+	return 1 / self.inverseMass
+}
+
 func (self *Particle3d) ApplyForce(force loops.Vec3) {
 	if self.inverseMass == 0 {
 		return
