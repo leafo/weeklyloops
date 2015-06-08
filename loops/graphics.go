@@ -147,3 +147,20 @@ func (self *Graphics) bindProgram(program Program) {
 	loc = program.GetUniformLocation("color")
 	gl.Uniform4f(loc, r, g, b, a)
 }
+
+func (self *Graphics) Enable3d() {
+	gl.Enable(gl.DEPTH_TEST)
+	gl.DepthFunc(gl.LESS)
+}
+
+func (self *Graphics) Disable3d() {
+	gl.Disable(gl.DEPTH_TEST)
+}
+
+func (self *Graphics) EnableWireframe() {
+	gl.PolygonMode(gl.FRONT_AND_BACK, gl.LINE)
+}
+
+func (self *Graphics) DisableWireframe() {
+	gl.PolygonMode(gl.FRONT_AND_BACK, gl.FILL)
+}

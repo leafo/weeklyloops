@@ -200,12 +200,3 @@ func (self *LoopWindow) Run() {
 
 	log.Print("Finished")
 }
-
-func (self *LoopWindow) Enable3d() {
-	gl.Enable(gl.DEPTH_TEST)
-	gl.DepthFunc(gl.LESS)
-}
-
-func (self *LoopWindow) Disable3d() {
-	gl.Disable(gl.DEPTH_TEST)
-}

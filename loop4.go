@@ -17,6 +17,8 @@ func main() {
 	loop := loops.NewLoopWindow()
 	loop.Title = "loop4"
 	loop.Speed = 0.2
+	loop.Width = 400
+	loop.Height = 400
 
 	obj, _ := ply.NewObjectFromFile("cube.ply")
 
@@ -28,17 +30,21 @@ func main() {
 	indexes := obj.PackIndexesB()
 
 	identity := loops.NewIdentityMat4()
-	perspective := loops.NewPerspectiveMatrix(60, 1, 0.1, 100)
 
 	loop.Draw = func(t float64, g *loops.Graphics) {
-		loop.Disable3d()
+		perspective := loops.NewPerspectiveMatrix(90+30*math.Sin(t*math.Pi*2), 1, 0.1, 100)
+
+		g.Disable3d()
+		// g.DisableWireframe()
 
 		g.SetViewMat(identity)
 		g.SetMat(identity)
 		g.SetColor(background)
 		g.DrawRect(-1, -1, 2, 2)
 
-		loop.Enable3d()
+		g.Enable3d()
+		// g.EnableWireframe()
+
 		g.SetViewMat(perspective)
 		g.SetColor(foreground)
 
