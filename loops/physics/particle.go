@@ -13,7 +13,7 @@ func (self ForceGeneratorFunc) Apply(p *Particle3d) {
 }
 
 var gravity = ForceGeneratorFunc(func(p *Particle3d) {
-	p.ApplyForce(loops.Vec3{0, -15, 0})
+	p.ApplyForce(loops.Vec3{0, -15, 0}.Scale(float32(p.Mass())))
 })
 
 type Particle3d struct {
