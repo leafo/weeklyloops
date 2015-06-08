@@ -6,6 +6,16 @@ type ForceGenerator interface {
 	Apply(particle *Particle3d)
 }
 
+type ForceGeneratorFunc func(*Particle3d)
+
+func (self ForceGeneratorFunc) Apply(p *Particle3d) {
+	self(p)
+}
+
+var gravity = ForceGeneratorFunc(func(p *Particle3d) {
+	p.ApplyForce(loops.Vec3{0, -15, 0})
+})
+
 type Particle3d struct {
 	Pos         loops.Vec3
 	vel         loops.Vec3
@@ -16,9 +26,12 @@ type Particle3d struct {
 }
 
 func NewParticle3d(mass, x, y, z float64) *Particle3d {
+	forces := make([]ForceGenerator, 0)
+	forces = append(forces, gravity)
+
 	return &Particle3d{
 		Pos:         loops.Vec3{float32(x), float32(y), float32(z)},
-		forces:      make([]ForceGenerator, 0),
+		forces:      forces,
 		inverseMass: 1 / mass,
 	}
 }

@@ -19,7 +19,7 @@ func main() {
 	verts := obj.PackF32("x", "y", "z", "nx", "ny", "nz")
 	indexes := obj.PackIndexesB()
 
-	particle := physics.NewParticle3d(1, 0, 0, 0)
+	particle := physics.NewParticle3d(1, 0, 5, 0)
 
 	loop.Update = func(dt float64) {
 		particle.Update(dt)
@@ -31,7 +31,7 @@ func main() {
 
 		m := loops.NewIdentityMat4().
 			TranslateVec3(particle.Pos).
-			Translate(0, 0, -5)
+			Translate(0, 0, -10)
 
 		g.SetMat(m)
 		g.Draw3d(gl.TRIANGLES, verts, indexes)

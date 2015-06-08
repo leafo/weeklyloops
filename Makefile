@@ -5,7 +5,7 @@ default: loop5
 
 all: loop1 loop2 loop3 loop4 loop5
 
-%: %.go loops/*.go loops/ply/*.go
+%: %.go loops/*.go loops/ply/*.go loops/physics/*.go
 	go build $<
 
 deps: 
