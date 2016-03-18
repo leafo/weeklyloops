@@ -6,7 +6,7 @@ import (
 	"log"
 	"strings"
 
-	gl "github.com/go-gl/gl/v4.1-core/gl"
+	gl "github.com/go-gl/gl/v3.3-core/gl"
 )
 
 type ShaderSource struct {
@@ -44,8 +44,9 @@ func NewProgram(shaders ...ShaderSource) Program {
 
 	for _, source := range shaders {
 		shader := gl.CreateShader(source.Type)
-		csource := gl.Str(source.Source + "\x00")
-		gl.ShaderSource(shader, 1, &csource, nil)
+		csource, free := gl.Strs(source.Source + "\x00")
+		gl.ShaderSource(shader, 1, csource, nil)
+		free()
 		gl.CompileShader(shader)
 
 		checkErrorLog("Failed to compile shader:",

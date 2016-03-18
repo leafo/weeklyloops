@@ -9,5 +9,5 @@ all: loop1 loop2 loop3 loop4 loop5
 	go build $<
 
 deps: 
-	go get github.com/go-gl/gl/v4.1-core/gl
+	go get github.com/go-gl/gl/v3.3-core/gl
 	go get github.com/go-gl/glfw/v3.1/glfw

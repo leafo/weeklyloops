@@ -5,7 +5,7 @@ import (
 	"log"
 	"math"
 
-	gl "github.com/go-gl/gl/v4.1-core/gl"
+	gl "github.com/go-gl/gl/v3.3-core/gl"
 	"github.com/leafo/weeklyloops/loops"
 	"github.com/leafo/weeklyloops/loops/ply"
 )

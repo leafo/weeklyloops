@@ -1,7 +1,7 @@
 package loops
 
 import (
-	gl "github.com/go-gl/gl/v4.1-core/gl"
+	gl "github.com/go-gl/gl/v3.3-core/gl"
 )
 
 var programSolid2d = ProgramSource{
