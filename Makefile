@@ -1,7 +1,7 @@
 
 .PHONY: deps default all
 
-default: loop5
+default: loop6
 
 all: loop1 loop2 loop3 loop4 loop5
 
